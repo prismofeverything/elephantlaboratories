@@ -1,0 +1,213 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+html {
+  overflow-y: scroll;
+}
+
+body {
+  /* background: #727a7e; */
+  background: #5f5599;
+  -webkit-font-smoothing: subpixel-antialiased;
+  font-family: 'Oxygen Mono';
+  /* letter-spacing: 1px; */
+  line-height: 1.8em;
+  font-size: 16px;
+  text-align: center;
+  color: #a5d7bc;
+  margin: 0;
+}
+
+input, textarea {
+  font-family: 'Oxygen Mono';
+  font-size: 18px;
+  background-color: #00adef;
+  border: 0px solid;
+  padding: 5px;
+}
+
+*:focus {
+  outline: 0;
+}
+
+form {
+  text-align: left;
+  padding: 0 40px;
+}
+
+.white {
+  color: #ffffff;
+}
+
+.green {
+  color: #a5d7bc;
+}
+
+.black {
+  color: #000000;
+}
+
+h1, h2, h3 {
+  font-weight: light;
+  font-style: light;
+  letter-spacing: 5px;
+  line-height: 1.7em;
+}
+
+h1 {
+  font-size: 24px;
+  margin: 14px 0;
+  padding: 14px 17px;
+}
+
+h2 {
+  font-size: 21px;
+}
+
+h3 {
+  font-size: 18px;
+  padding: 14px 0;
+}
+
+img {
+  vertical-align: middle;
+}
+
+p {
+  margin: 5px 0;
+}
+
+a {
+  text-decoration: none;
+  color: #ffffff;
+}
+
+*, *:before, *:after {
+  -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+
+#elephantlaboratories-site {
+  /* padding: 120px 0px; */
+  margin: 0 auto;
+  max-width: 777px;
+  margin-bottom: 40px;
+}
+
+#elephantlaboratories-logo {
+  padding: 0 0 0 0;
+  position: relative;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#triclops {
+  margin-top: 0px;
+  /* margin-top: -140px; */
+}
+
+#elephantlaboratories-nav-sol {
+  margin-top: -40px;
+  /* background-color: #000000; */
+  /* padding: 5px 50px; */
+}
+
+#elephantlaboratories-nav {
+  float: left;
+  width: 100%;
+  position: relative;
+  /* background-color: #2ab573; */
+  margin: 40px 0;
+}
+
+#elephantlaboratories-nav ul {
+  clear: left;
+  float: left;
+  list-style: none;
+  position: relative;
+  left: 50%;
+  text-align: center;
+}
+
+#elephantlaboratories-nav ul li {
+  display: block;
+  float: left;
+  position: relative;
+  right: 50%;
+  list-style: none;
+}
+
+#elephantlaboratories-nav ul li a {
+  display: block;
+  padding: 6px 80px;
+  line-height: 1.3em;
+  letter-spacing: 5px;
+  font-size: 21px;
+}
+
+#elephantlaboratories-content p {
+  font-size: 18px;
+  text-align: center;
+  vertical-align: middle;
+  margin: 100px 100px;
+}
+
+#elephantlaboratories-outer a {
+  font-size: 12px;
+}
+
+#sol-link {
+  background-color: #000000;
+}
+
+.active-black {
+  background-color: #000000;
+}
+
+.active-green {
+  background-color: #a5d7bc;
+}
+
+.name {
+  letter-spacing: 3px;
+}

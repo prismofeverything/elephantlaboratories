@@ -1,0 +1,218 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+html {
+  overflow-y: scroll;
+}
+
+body {
+  background: #39b775;
+  -webkit-font-smoothing: subpixel-antialiased;
+  font-family: 'Poiret One';
+  /* letter-spacing: 1px; */
+  line-height: 1.8em;
+  font-size: 16px;
+  text-align: center;
+  color: #2ab573;
+  margin: 0;
+}
+
+input, textarea {
+  font-family: 'Poiret One';
+  font-size: 18px;
+  background-color: 8c6aaa;
+  border: 0px solid;
+  color: #cccccc;
+  padding: 10px;
+  letter-spacing: 3px;
+}
+
+textarea {
+  width: 100%;
+  height: 30%;
+  margin-bottom: 15px;
+}
+
+*:focus {
+  outline: 0;
+}
+
+form {
+  text-align: left;
+  padding: 0 40px;
+}
+
+.grey {
+  color: #cccccc;
+}
+
+h1, h2, h3 {
+  font-weight: bold;
+  font-style: bold;
+  letter-spacing: 1px;
+  line-height: 1.7em;
+  margin: 14px 0;
+  padding: 14px 17px;
+}
+
+h1 {
+  font-size: 24px;
+}
+
+h2 {
+  font-size: 21px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+img {
+  vertical-align: middle;
+}
+
+p {
+  margin: 5px 0;
+}
+
+a {
+  text-decoration: none;
+  color: #cccccc;
+}
+
+*, *:before, *:after {
+  -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+
+#think-site {
+  margin: 0 auto;
+  max-width: 777px;
+}
+
+#think-header {
+  padding: 0px;
+  padding-bottom: 14px;
+  position: relative;
+  vertical-align: middle;
+  font-family: 'Poiret One';
+}
+
+#think-header h2 {
+  font-size: 50px;
+  text-align: center;
+  letter-spacing: 11px;
+  background-color: c1c174;
+  background-color: cec73a;
+  color: #ffffff;
+  margin-top: 40px;
+  margin-left: 25%;
+  margin-right: 25%;
+}
+
+#think-home {
+  background-color: 8c6aaa;
+  border-radius: 30px;
+  padding: 50px;
+  margin-bottom: 100px;
+}
+
+#think-home h3 {
+  letter-spacing: 3px;
+  color: #cccccc;
+}
+
+#think-expand {
+  background-color: c47d4d;
+  border-radius: 30px;
+  padding-top: 20px;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-bottom: 30px;
+}
+
+#think-expand form {
+  text-align: center;
+}
+
+#think-enhance {
+  margin-top: -40px;
+  margin-bottom: 100px;
+}
+
+.submit {
+  margin: 20px 2px;
+  width: 40%;
+  color: #222222;
+  border-radius: 10px;
+  background-color: #cccccc;
+  text-align: center;
+  letter-spacing: 3px;
+}
+
+a.submit {
+  padding: 10px 40px;
+}
+
+.expanding {
+  background-color: #00adef !important;
+}
+
+#think-footer {
+  position: fixed;
+  left: 0px;
+  bottom: 0px;
+  line-height: 0;
+  background-color: #727a7e;
+  background-color: #74c47c;
+  padding: 30px 0;
+  width: 100%;
+  margin-top: 80px;
+}
+
+#think-footer a {
+  color: #ffffff;
+  text-align: center;
+  letter-spacing: 5px;
+}
+

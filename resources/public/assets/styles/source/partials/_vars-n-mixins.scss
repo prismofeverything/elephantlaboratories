@@ -1,0 +1,41 @@
+/*----------------------------------------------------------------------------
+ *
+ * VARIABLES & MIXINS
+ *
+ *---------------------------------------------------------------------------*/
+
+$text: #292c35;			// Sol Dark Silver -- Most Body Copy on light backgrounds, footer hairline
+$text-alt: #737d83;		// Sol Medium Silver -- Footer Color
+$medium: #a3bac6;		// Sol Silver -- Dark Background Intro Area text
+$light: #ffffff;
+$bright: #a19364;		// Sol Gold -- Most Headlines
+$dark: #141a2c; 			// Sol Celestial Blue -- Footer and Backgrounds
+$deep: #070d1f; 			// Sol Deepest Blue -- For Occasional Backgrounds
+$ele: #706d90;			// Elephant Laboratories Lavender
+$ele-accent: #afd5be	;	// Elephant Laboratories Blue
+$ele-dark: #3c3958;		// Elephant Laboratories Background Color
+$ele-light: #9491b4;		// Elephant Laboratories — Footer Text
+
+$light-overlay: #f4f4e0; //
+
+$small-break: 30em;
+$medium-break: 40em;
+$big-break: 60em;
+$bigger-break: 80em;
+
+$display-type: "Gotham A", "Gotham B", Arial, sans-serif;
+$display-type--black: "Gotham Black A", "Gotham Black B", Arial, sans-serif;
+$body-type: "Gotham SSm A", "Gotham SSm B", Arial, sans-serif;
+$body-type--black: "Gotham SSm Black A", "Gotham SSm Black B", Arial, sans-serif;
+$tracking: .165em;
+
+$measure: 53rem;
+$constrain-width: 63.875rem;
+
+@mixin clearfix {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}

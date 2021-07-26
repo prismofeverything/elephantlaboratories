@@ -1,0 +1,24 @@
+/*----------------------------------------------------------------------------
+ *
+ * OVERRIDES for CHOCOLAT LIGHTBOX PLUGIN
+ *
+ *---------------------------------------------------------------------------*/
+ 
+ 
+.chocolat-overlay {
+    background-color:$dark;
+}
+
+.chocolat-wrapper {
+    color: $bright;
+    font-weight: 700;
+}
+
+.chocolat-wrapper .chocolat-fullscreen,
+.chocolat-wrapper .chocolat-description {
+	display:none;
+}
+
+.chocolat-wrapper .chocolat-pagination {
+	margin-right: 0;
+}

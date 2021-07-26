@@ -1,0 +1,304 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+html {
+  overflow-y: scroll;
+}
+
+body {
+  /* background: #392d33; */
+    /* #2f2e36; */
+  background: #2d2c32;
+  -webkit-font-smoothing: subpixel-antialiased;
+  font-family: 'Inder';
+  /* letter-spacing: 1px; */
+  line-height: 1.8em;
+  font-size: 16px;
+  text-align: center;
+  /* color: #2ab573; */
+  color: #fed256;
+  margin: 0;
+}
+
+input, textarea {
+  font-family: 'Inder';
+  font-size: 18px;
+  color: #feebaf;
+  background-color: #c05c3e;
+  /* color: #ffffff; */
+  /* background-color: #00adef; */
+  border: 0px solid;
+  padding: 5px;
+}
+
+*:focus {
+  outline: 0;
+}
+
+form {
+  text-align: left;
+  padding: 0 40px;
+}
+
+.white {
+  color: #feebaf;
+  /* color: #fff3d3; */
+}
+
+.green {
+  /* color: #D7C32D; */
+  /* color: #2ab573; */
+  color: #a63f39;
+}
+
+.blue {
+  /* color: #00adef; */
+  /* color: #D5742E; */
+  color: #fed256;
+}
+
+.purple {
+  /* color: #934a9c; */
+  /* color: #892E20; */
+  color: #c05c3e;
+}
+
+.utopia {
+  color: #0066ff;
+}
+
+.omnitopia {
+  color: #00cc66;
+}
+
+.aquatopia {
+  color: #9933ff;
+}
+
+.transtopia {
+  color: #cccccc;
+}
+
+.nurtopia {
+  color: #555555;
+}
+
+.utopia-light {
+  color: #3399ff;
+}
+
+.omnitopia-light {
+  color: #33cc99;
+}
+
+.aquatopia-light {
+  color: #cc66ff;
+}
+
+.transtopia-light {
+  color: #dddddd;
+}
+
+.nurtopia-light {
+  color: #777777;
+}
+
+h1, h2, h3 {
+  font-weight: bold;
+  font-style: bold;
+  letter-spacing: 1px;
+  line-height: 1.7em;
+  margin: 14px 0;
+  padding: 14px 17px;
+}
+
+h1 {
+  font-size: 24px;
+}
+
+h2 {
+  font-size: 21px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+img {
+  vertical-align: middle;
+}
+
+p {
+  margin: 5px 0;
+}
+
+a {
+  text-decoration: none;
+  color: #feebaf;
+}
+
+*, *:before, *:after {
+  -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+
+#sol-signup {
+  text-align: left;
+  margin: 80px 0;
+}
+
+#sol-site {
+  /* padding: 120px 0px; */
+  margin: 0 auto;
+  max-width: 777px;
+}
+
+#sol-logo {
+  padding: 0px;
+  padding-bottom: 14px;
+  position: relative;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#sol-nav {
+  float: left;
+  width: 100%;
+  position: relative;
+  /* background-color: #D5742E; */
+  /* background-color: #D7C32D; */
+  /* background-color: #2ab573; */
+  /* background-color: #934a9c; */
+  /* background-color: #892E20; */
+  background-color: #a63f39;
+  letter-spacing: 2px;
+  margin-bottom: 80px;
+}
+
+#sol-nav ul {
+  clear: left;
+  float: left;
+  list-style: none;
+  position: relative;
+  left: 50%;
+  text-align: center;
+}
+
+#sol-nav ul li {
+  display: block;
+  float: left;
+  position: relative;
+  right: 50%;
+  list-style: none;
+}
+
+#sol-nav ul li a {
+  display: block;
+  padding: 6px 15px;
+  line-height: 1.3em;
+}
+
+.active {
+  /* background-color: #000000; */
+  /* background-color: #934a9c; */
+  /* background-color: #892E20; */
+  /* background-color: #D7C32D; */
+  background-color: #fed256;
+}
+
+.active a {
+  color: #2d2c32;
+  /* #392d33; */
+}
+
+#sol-story {
+  padding: 0 0 150px;
+}
+
+.copy {
+  text-align: left;
+}
+
+.copy p {
+  margin: 20px 0;
+}
+
+#sol-images {
+  /* float: left; */
+  width: 100%
+}
+
+/* .sol-image-container { */
+/*   float: left; */
+/*   position: relative; */
+/* } */
+
+.sol-image {
+  width: 80%;
+}
+
+.submit {
+  margin: 20px 2px;
+  padding-left: 40px;
+  padding-right: 40px;
+  /* color: #ffffff; */
+  /* background-color: #934a9c; */
+  color: #feebaf;
+  background-color: #a63f39;
+}
+
+#sol-footer {
+  line-height: 0;
+  background-color: #727a7e;
+  background: #5f5599;
+  padding: 10px 0;
+  margin-top: 80px;
+}
+
+.elephant {
+  font-family: 'Oxygen Mono';
+}
+
+.elephant-green {
+  color: #a5d7bc;
+}
