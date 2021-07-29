@@ -1,10 +1,11 @@
 (ns elephantlaboratories.routes.home
   (:require
+   [elephantlaboratories.mongo :as db]
    [elephantlaboratories.layout :as layout]
    [clojure.java.io :as io]
    [elephantlaboratories.middleware :as middleware]
-   [ring.util.response]
-   [ring.util.http-response :as response]))
+   [ring.util.response :as response]
+   [ring.util.http-response :as http-response]))
 
 (defn home-page
   [request]
@@ -13,67 +14,40 @@
    "home.html"
    {:current-page "home"}))
 
-(defn sol-home-page
-  [request]
+(defn sol-page
+  [page request]
   (layout/render
    request
    "sol.html"
-   {:current-page "sol-home"}))
+   {:current-page page}))
 
-(defn sol-story-page
-  [request]
-  (layout/render
-   request
-   "sol.html"
-   {:current-page "sol-story"}))
+(defn sign-up
+  [db request]
+  (let [params (:params request)]
+    (println "sign up! " params)
+    (db/insert! db :mailing-list params)
+    (response/response {:ok true :status :success})))
 
-(defn sol-worlds-page
-  [request]
+(defn organism-page
+  [page request]
   (layout/render
    request
-   "sol.html"
-   {:current-page "sol-worlds"}))
-
-(defn sol-background-page
-  [request]
-  (layout/render
-   request
-   "sol.html"
-   {:current-page "sol-background"}))
-
-(defn sol-buy-page
-  [request]
-  (layout/render
-   request
-   "sol.html"
-   {:current-page "sol-buy"}))
-
-(defn sol-thanks-page
-  [request]
-  (layout/render
-   request
-   "sol.html"
-   {:current-page "sol-thanks"}))
+   "organism.html"
+   {:current-page page}))
 
 (defn home-routes
-  []
+  [db]
   [""
    {:middleware [middleware/wrap-csrf
                  middleware/wrap-formats]}
    ["/" {:get home-page}]
-   ["/sol/" {:get sol-home-page}]
-   ["/sol/story/" {:get sol-story-page}]
-   ["/sol/worlds/" {:get sol-worlds-page}]
-   ["/sol/background/" {:get sol-background-page}]
-   ["/sol/buy/" {:get sol-buy-page}]
-   ["/sol/thanks/" {:get sol-thanks-page}]])
-
-
-
-
-
-
-   ;; ["/docs" {:get (fn [_]
-   ;;                  (-> (response/ok (-> "docs/docs.md" io/resource slurp))
-   ;;                      (response/header "Content-Type" "text/plain; charset=utf-8")))}]
+   ["/sol" {:get (partial sol-page "sol-home")}]
+   ["/sol/story" {:get (partial sol-page "sol-story")}]
+   ["/sol/worlds" {:get (partial sol-page "sol-worlds")}]
+   ["/sol/background" (partial sol-page "sol-background")]
+   ["/sol/buy" {:get (partial sol-page "sol-buy")}]
+   ["/sol/thanks" {:get (partial sol-page "sol-thanks")}]
+   ["/sol/mailing-list" {:post (partial sign-up db)}]
+   ["/sol/complete" {:get (partial sol-page "sol-complete")}]
+   ["/organism" {:get (partial organism-page "organism-home")}]])
 

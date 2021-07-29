@@ -22,6 +22,8 @@
                  [metosin/reitit "0.5.13"]
                  [metosin/ring-http-response "0.9.2"]
                  [mount "0.1.16"]
+                 [com.novemberain/monger "3.5.0"
+                  :exclusions [com.google.guava/guava]]
                  [nrepl "0.8.3"]
                  [org.clojure/clojure "1.10.3"]
                  [org.clojure/clojurescript "1.10.866" :scope "provided"]
