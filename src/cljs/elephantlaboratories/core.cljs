@@ -759,7 +759,7 @@
       [:h1 {:class "h1"} "SIGN-UP SUCCESSFUL!"]]]]
    [:div {:class "container"} 
     [:div {:class "constrainer measure"} 
-     [:p "Thank you for subscribing! We will send you updates as they arrive."]]]])
+     [:p "Thank you for subscribing! You will be notified about these projects as information becomes available. "]]]])
 
 
 (defn organism-nav
