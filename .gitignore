@@ -14,6 +14,6 @@ profiles.clj
 
 /node_modules
 /log
-
+/dump
 
 /figwheel_server.log
