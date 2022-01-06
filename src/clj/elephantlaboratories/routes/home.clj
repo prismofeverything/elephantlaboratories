@@ -2,7 +2,6 @@
   (:require
    [elephantlaboratories.mongo :as db]
    [elephantlaboratories.layout :as layout]
-   [clojure.java.io :as io]
    [elephantlaboratories.middleware :as middleware]
    [ring.util.response :as response]
    [ring.util.http-response :as http-response]))
