@@ -27,7 +27,8 @@
   [db]
   (let [sign-ups (db/find-all db :mailing-list)
         header "Email Address,First Name,Last Name"
-        lines (map make-line sign-ups)]
+        lines (map make-line sign-ups)
+        lines (remove #(= ",," %) lines)]
     (string/join "\n" (conj lines header))))
 
 (defn write-csv
