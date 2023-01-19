@@ -1,0 +1,7 @@
+I am seeking to develop and apply mathematical and computational methods for the modeling of the structure and behavior of biological systems, as well as ways to compose these systems into larger multi-scale simulations:
+* Developing methods - Doing deep surveys of existing formalisms in an effort to find an expressive media for encoding the structure and behavior of biological systems.
+* Applying methods - Using the methods found to encode biological systems of interest into mathematical or computational entites, involving iteration and development of both the models and the methods.
+* Biological structure - This means the configuration of molecules and complexes, but also the system of coherent relationships that underlie these molecular components, such as the total self-generative quality of the organism.
+* Biological behavior - Building a predictive model of the dynamics of biological systems given their structure and known qualities.
+* Composition - The language of Category Theory gives us the ability to talk about the composition of different kinds of mathematical systems.
+* Multi-scale simulation - The ultimate point of all of this is to construct realistic models of biological systems that operate at multiple scales and integrate the information at every level. 

@@ -137,7 +137,7 @@
       [:a {:href "#what", :class "button buttonwrap__button"} "Learn More"]
       [:a {:href "/sol/buy", :class "button buttonwrap__button button--outline"} "Sign up!"]]
      [:aside {:class "current-status"}
-      [:strong "CURRENT STATUS"]": PLANNING REPRINT!"]]]])
+      [:strong "CURRENT STATUS"] ": Manufacturing Sol: Last Days of a Star!"]]]])
 
 (defn sol-main
   []
@@ -600,9 +600,9 @@
       [:div {:class "constrainer"}
        [:div {:class "measure"}
         [:h2 {:class "h2"} "Want to be on the mothership?"]
-        [:p "Thanks for visiting! We are currently planning the best way to get SOL back in print," 
+        [:p "Thanks for visiting! We recently had a successful campaign for the reprint of Sol: Last Days of a Star!" 
          [:br]
-         "as well as preparing a KS campaign for our new game, ORGANISM. "]
+         "Now we are working through manufacture, as well as preparing a KS campaign for our new game, ORGANISM. "]
         [:p "If you want to receive updates about our progress, please sign up for the mailing list below."]
         [:p {:style {:color "#a19364"}} "(We will only use your information to send you occasional updates on our games. " 
          [:br]
@@ -639,21 +639,7 @@
         [:p "We would love your input as we decide how to proceed with these two games:"]
         [:div {:class "half-and-half half-and-half--buy"}
          [:fieldset {:id "feedback", :class "half-and-half__item buy__fieldset"}
-          [:legend {:class "h3"} "Feedback"]
-          [:div {:class "buy__inputgroup"}
-           [:label {:class "buy__inputgroup__label"}
-            [:input
-             {:type "checkbox"
-              :id "campaign"
-              :name "campaign"
-              :class "field buy__inputgroup__input--checkbox"
-              ;; :value "campaign"
-              :checked (:campaign @form)
-              :on-change
-              (fn [event]
-                (let [checked (-> event .-target .-checked)]
-                  (swap! form assoc :campaign checked)))}]
-            [:span {:class "buy__inputgroup__label__check"} "Interested in both games as a KS campaign"]]]
+          [:legend {:class "h3"} "interest"]
           [:div {:class "buy__inputgroup"}
            [:label {:class "buy__inputgroup__label"}
             [:input
@@ -667,7 +653,7 @@
               (fn [event]
                 (let [checked (-> event .-target .-checked)]
                   (swap! form assoc :reprint checked)))}]
-            [:span {:class "buy__inputgroup__label__check"} "Only here for Sol - I prefer the reprint"]]]
+            [:span {:class "buy__inputgroup__label__check"} "Sol: Journey Between Worlds"]]]
           [:div {:class "buy__inputgroup"}
            [:label {:class "buy__inputgroup__label"}
             [:input
@@ -681,7 +667,21 @@
               (fn [event]
                 (let [checked (-> event .-target .-checked)]
                   (swap! form assoc :organism checked)))}]
-            [:span {:class "buy__inputgroup__label__check"} "Only here for ORGANISM"]]]
+            [:span {:class "buy__inputgroup__label__check"} "Beam of Light"]]]
+          [:div {:class "buy__inputgroup"}
+           [:label {:class "buy__inputgroup__label"}
+            [:input
+             {:type "checkbox"
+              :id "campaign"
+              :name "campaign"
+              :class "field buy__inputgroup__input--checkbox"
+              ;; :value "campaign"
+              :checked (:campaign @form)
+              :on-change
+              (fn [event]
+                (let [checked (-> event .-target .-checked)]
+                  (swap! form assoc :campaign checked)))}]
+            [:span {:class "buy__inputgroup__label__check"} "Poiesis"]]]
           [:div {:class "buy__inputgroup"}
            [:label {:class "buy__inputgroup__label"}
             [:span {:class "buy__inputgroup__label__desc"} "Any other comments?"]
