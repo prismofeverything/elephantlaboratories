@@ -75,6 +75,10 @@ direct_translations = {
     'Country Code': 'Shipping Country Code'}
 
 
+spiral_columns = {
+
+}
+
 products = {
     'EPH112': {
         'sku': 'EPH112',
@@ -163,11 +167,7 @@ def append_row(df, row):
     return df
 
 
-def export_backer_report(countries=None):
-    input_path = 'sol-reprint-12-10-23.csv'
-    replace_path = 'sol-problem-addresses.csv'
-    output_path = 'sol-crwn-export-12-10-2023.csv'
-
+def open_updated_report(input_path, replace_path):
     backers = read_backer_report(
         input_path)
 
@@ -181,6 +181,18 @@ def export_backer_report(countries=None):
     columns = {
         column_name: report[column_name]
         for column_name in backer_columns}
+
+    return report, columns
+
+
+def export_backer_report(countries=None):
+    input_path = 'sol-reprint-12-21-2023.csv'
+    replace_path = 'sol-problem-addresses.csv'
+    output_path = 'sol-crwn-export-12-21-2023.csv'
+
+    report, columns = open_updated_report(
+        input_path,
+        replace_path)
 
     export = pd.DataFrame(
         columns=export_columns)
@@ -206,8 +218,32 @@ def export_backer_report(countries=None):
         index=False)
 
 
+def export_spiral_report(exclude=None):
+    exclude = exclude or []
+
+    input_path = 'sol-reprint-12-21-2023.csv'
+    replace_path = 'sol-problem-addresses.csv'
+    output_path = 'sol-spiral-export-12-23-2023.csv'
+
+    report, columns = open_updated_report(
+        input_path,
+        replace_path)
+
+    
+
+    
+
+
 if __name__ == '__main__':
-    export_backer_report(
-        countries=[
-            'US',
-            'CA'])
+    export_type = 'CRWN'
+    export_type = 'SG'
+    if export_type == 'CRWN':
+        export_backer_report(
+            countries=[
+                'US',
+                'CA'])
+    else:
+        export_spiral_report(
+            exclude=[
+                'US',
+                'CA'])
