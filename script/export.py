@@ -1,10 +1,7 @@
 import math
 import pandas as pd
 
-
-def read_backer_report(path):
-    report = pd.read_csv(path)
-    return report
+from pathlib import Path
 
 
 backer_columns = [
@@ -75,9 +72,21 @@ direct_translations = {
     'Country Code': 'Shipping Country Code'}
 
 
-spiral_columns = {
-
+spiral_translations = {
+    'Client Order No.': 'Backer Number',
+    'NAME': 'Backer Name',
+    'EMAIL': 'Email',
+    'TELEPHONE': 'Shipping Phone Number',
+    'ADDRESS1': 'Shipping Address 1',
+    'ADDRESS2': 'Shipping Address 2',
+    'CITY': 'Shipping City',
+    'STATE/COUNTY': 'Shipping State',
+    'POSTAL_CODE': 'Shipping Postal Code',
+    'COUNTRY': 'Shipping Country Code',
+    'Sol Base game': 'Sol: Last Days of a Star',
+    'Sol Insert': 'Wooden Insert',
 }
+
 
 products = {
     'EPH112': {
@@ -94,6 +103,16 @@ products = {
         'weight': 3.53}}
 
 
+def read_backer_report(path):
+    report = pd.read_csv(path)
+    return report
+
+
+def read_excel_file(path):
+    excel = pd.read_excel(path, sheet_name=0)
+    return excel
+
+
 def item_fields(sku, quantity):
     product = products[sku]
     result = {
@@ -105,12 +124,53 @@ def item_fields(sku, quantity):
     return result
 
 
+def isnan(value):
+    return isinstance(value, float) and math.isnan(value)
+
+
+def translate_spiral(row):
+    result = {}
+
+    if (row['Sol: Last Days of a Star'] == 0 and row['Wooden Insert'] == 0) or empty_value(row['Shipping Country Code']):
+        return result
+
+    for export_key, backer_key in spiral_translations.items():
+        update = row[backer_key]
+        if empty_value(update):
+            update = ''
+
+        result[export_key] = update
+
+    result['Order Value Currency'] = 'USD'
+    result['Tracking'] = 'Y'
+
+    if row['Sol: Last Days of a Star'] == 0 and row['Wooden Insert'] == 1:
+        result['Sol 2nd edition upgrade pack'] = 1
+    else:
+        result['Sol 2nd edition upgrade pack'] = 0
+
+    if isinstance(row['Pledge Amount'], float):
+        import ipdb; ipdb.set_trace()
+
+    pledge_amount = float(row['Pledge Amount'][1:])
+    shipping_amount = float(row['Shipping Amount'][1:])
+
+    result['Order Value'] = pledge_amount - shipping_amount
+    result['Carriage'] = shipping_amount
+    result['POSTAL_CODE'] = str(result['POSTAL_CODE'])
+
+    if empty_value(result['EMAIL']):
+        result['EMAIL'] = 'mothership@elephantlaboratories.com'
+
+    return result
+
+
 def translate_row(row):
     result = {}
 
     for export_key, backer_key in direct_translations.items():
         value = row[backer_key]
-        if backer_key == 'Shipping Address 2' and isinstance(value, float) and math.isnan(value):
+        if backer_key == 'Shipping Address 2' and isnan(value):
             result[export_key] = ''
         else:
             result[export_key] = value
@@ -160,6 +220,23 @@ def translate_row(row):
         insert_result.update(insert_fields)
 
         return [result, insert_result]
+
+
+def empty_value(value):
+    return value is None or value == '' or isnan(value)
+
+
+def merge_row(existing, row):
+    merged = {}
+
+    for key, value in existing.items():
+        new_value = row[key]
+        if key in row and empty_value(value) or not empty_value(new_value):
+            merged[key] = new_value
+        else:
+            merged[key] = value
+
+    return merged
 
 
 def append_row(df, row):
@@ -221,17 +298,43 @@ def export_backer_report(countries=None):
 def export_spiral_report(exclude=None):
     exclude = exclude or []
 
-    input_path = 'sol-reprint-12-21-2023.csv'
-    replace_path = 'sol-problem-addresses.csv'
-    output_path = 'sol-spiral-export-12-23-2023.csv'
+    base_path = Path('~/elabs/sol-reprint/campaign/backers-export/')
+
+    template_path = base_path / 'sol-spiral-report.xlsx'
+    input_path = base_path / 'sol-reprint-12-21-2023.csv'
+    replace_path = base_path / 'sol-problem-addresses.csv'
+    output_path = base_path / 'sol-spiral-export-12-26-2023.xlsx'
 
     report, columns = open_updated_report(
         input_path,
         replace_path)
 
-    
+    excel = read_excel_file(template_path)
 
-    
+    report_entries = {}
+
+    for index, row in enumerate(zip(*columns.values())):
+        row_entries = dict(
+            zip(backer_columns, row))
+        backer_number = row_entries['Backer Number']
+        if backer_number in report_entries:
+            report_entries[backer_number] = merge_row(
+                report_entries[backer_number],
+                row_entries)
+        else:
+            report_entries[backer_number] = row_entries
+
+    for row in report_entries.values():
+        if row['Shipping Country Code'] not in exclude:
+            translate = translate_spiral(row)
+            if translate:
+                excel = append_row(
+                    excel,
+                    translate)
+
+    excel.to_excel(
+        output_path,
+        index=False)
 
 
 if __name__ == '__main__':
