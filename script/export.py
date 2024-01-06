@@ -61,7 +61,7 @@ empty_columns = [
 
 direct_translations = {
     'Order #': 'Backer Number',
-    'Recipient Full Name': 'Backer Name',
+    'Recipient Full Name': 'Shipping Name',
     'Recipient Email': 'Email',
     'Recipient Phone': 'Shipping Phone Number',
     'Address Line 1': 'Shipping Address 1',
@@ -74,7 +74,7 @@ direct_translations = {
 
 spiral_translations = {
     'Client Order No.': 'Backer Number',
-    'NAME': 'Backer Name',
+    'NAME': 'Shipping Name',
     'EMAIL': 'Email',
     'TELEPHONE': 'Shipping Phone Number',
     'ADDRESS1': 'Shipping Address 1',
@@ -263,9 +263,11 @@ def open_updated_report(input_path, replace_path):
 
 
 def export_backer_report(countries=None):
-    input_path = 'sol-reprint-12-21-2023.csv'
-    replace_path = 'sol-problem-addresses.csv'
-    output_path = 'sol-crwn-export-12-21-2023.csv'
+    base_path = Path('~/elabs/sol-reprint/campaign/backers-export/')
+
+    input_path = base_path / 'sol-reprint-6-1-2024.csv'
+    replace_path = base_path / 'sol-problem-addresses.csv'
+    output_path = base_path / 'sol-crwn-export-jan-6-2024.csv'
 
     report, columns = open_updated_report(
         input_path,
@@ -301,9 +303,9 @@ def export_spiral_report(exclude=None):
     base_path = Path('~/elabs/sol-reprint/campaign/backers-export/')
 
     template_path = base_path / 'sol-spiral-report.xlsx'
-    input_path = base_path / 'sol-reprint-12-21-2023.csv'
+    input_path = base_path / 'sol-reprint-6-1-2024.csv'
     replace_path = base_path / 'sol-problem-addresses.csv'
-    output_path = base_path / 'sol-spiral-export-12-26-2023.xlsx'
+    output_path = base_path / 'sol-spiral-export-6-jan-2023.xlsx'
 
     report, columns = open_updated_report(
         input_path,
@@ -338,8 +340,9 @@ def export_spiral_report(exclude=None):
 
 
 if __name__ == '__main__':
-    export_type = 'CRWN'
+    # export_type = 'CRWN'
     export_type = 'SG'
+
     if export_type == 'CRWN':
         export_backer_report(
             countries=[
