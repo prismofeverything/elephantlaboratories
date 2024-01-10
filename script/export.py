@@ -1,5 +1,7 @@
+import sys
 import math
 import pandas as pd
+import datetime
 
 from pathlib import Path
 
@@ -265,9 +267,11 @@ def open_updated_report(input_path, replace_path):
 def export_backer_report(countries=None):
     base_path = Path('~/elabs/sol-reprint/campaign/backers-export/')
 
-    input_path = base_path / 'sol-reprint-6-1-2024.csv'
+    now = datetime.datetime.now()
+    timestamp = f'{now:%b-%d-%Y}'
+    input_path = base_path / f'sol-reprint-{timestamp}.csv'
     replace_path = base_path / 'sol-problem-addresses.csv'
-    output_path = base_path / 'sol-crwn-export-jan-6-2024.csv'
+    output_path = base_path / f'sol-crwn-export-{timestamp}.csv'
 
     report, columns = open_updated_report(
         input_path,
@@ -302,10 +306,13 @@ def export_spiral_report(exclude=None):
 
     base_path = Path('~/elabs/sol-reprint/campaign/backers-export/')
 
+    now = datetime.datetime.now()
+    timestamp = f'{now:%b-%d-%Y}'
+
     template_path = base_path / 'sol-spiral-report.xlsx'
-    input_path = base_path / 'sol-reprint-6-1-2024.csv'
+    input_path = base_path / f'sol-reprint-{timestamp}.csv'
     replace_path = base_path / 'sol-problem-addresses.csv'
-    output_path = base_path / 'sol-spiral-export-6-jan-2023.xlsx'
+    output_path = base_path / f'sol-spiral-export-{timestamp}.xlsx'
 
     report, columns = open_updated_report(
         input_path,
@@ -340,16 +347,20 @@ def export_spiral_report(exclude=None):
 
 
 if __name__ == '__main__':
-    # export_type = 'CRWN'
-    export_type = 'SG'
+    export_type = 'crwn'
+    if len(sys.argv) > 1:
+        export_type = sys.argv[1]
 
-    if export_type == 'CRWN':
+    if export_type == 'crwn':
         export_backer_report(
             countries=[
                 'US',
                 'CA'])
-    else:
+    elif export_type == 'spiral':
         export_spiral_report(
             exclude=[
                 'US',
                 'CA'])
+
+    else:
+        print(f'unknown export type: {export_type}')
