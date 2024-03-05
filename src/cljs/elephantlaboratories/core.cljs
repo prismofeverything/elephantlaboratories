@@ -134,10 +134,12 @@
      [:p "Sol: Last Days of a Star is a strategic game of solar destruction and salvation for 1–5 players. Play as one of the five worlds orbiting the Sun, diving into the searing plasma to harvest critical energy — energy needed to fuel your escape before the Sun goes supernova. Sol has simple, easy to learn rules, a deep decision space and emergent strategy that unfolds over " 
       [:nobr "multiple plays"]"."]
      [:p {:class "buttonwrap"}
-      [:a {:href "#what", :class "button buttonwrap__button"} "Learn More"]
-      [:a {:href "/sol/buy", :class "button buttonwrap__button button--outline"} "Sign up!"]]
+      [:a {:href "#what", :class "button buttonwrap__button button--outline"} "Learn More"]
+      [:a {:href "/sol/buy", :class "button buttonwrap__button"} "Sign up!"]]
      [:aside {:class "current-status"}
-      [:strong "CURRENT STATUS"] ": Manufacturing Sol: Last Days of a Star!"]]]])
+      [:strong "CURRENT STATUS"]
+      ": Finalizing fulfillment for Sol: Last Days of a Star!"
+      " - retail orders opening soon"]]]])
 
 (defn sol-main
   []
@@ -667,7 +669,7 @@
               (fn [event]
                 (let [checked (-> event .-target .-checked)]
                   (swap! form assoc :organism checked)))}]
-            [:span {:class "buy__inputgroup__label__check"} "Beam of Light"]]]
+            [:span {:class "buy__inputgroup__label__check"} "ORGANISM"]]]
           [:div {:class "buy__inputgroup"}
            [:label {:class "buy__inputgroup__label"}
             [:input
@@ -681,7 +683,7 @@
               (fn [event]
                 (let [checked (-> event .-target .-checked)]
                   (swap! form assoc :campaign checked)))}]
-            [:span {:class "buy__inputgroup__label__check"} "Poiesis"]]]
+            [:span {:class "buy__inputgroup__label__check"} "Beam of Light"]]]
           [:div {:class "buy__inputgroup"}
            [:label {:class "buy__inputgroup__label"}
             [:span {:class "buy__inputgroup__label__desc"} "Any other comments?"]
