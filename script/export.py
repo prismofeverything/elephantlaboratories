@@ -246,7 +246,7 @@ def append_row(df, row):
     return df
 
 
-def open_updated_report(input_path, replace_path):
+def open_updated_report(input_path, replace_path, from_date=None):
     backers = read_backer_report(
         input_path)
 
@@ -257,6 +257,11 @@ def open_updated_report(input_path, replace_path):
         [backers, replace],
         ignore_index=True)
 
+    report['Survey Response'] = pd.to_datetime(report['Survey Response'])
+
+    if from_date is not None:
+        report = report[report['Survey Response'] > from_date]
+
     columns = {
         column_name: report[column_name]
         for column_name in backer_columns}
@@ -264,7 +269,7 @@ def open_updated_report(input_path, replace_path):
     return report, columns
 
 
-def export_backer_report(countries=None):
+def export_backer_report(from_date=None, countries=None):
     base_path = Path('~/elabs/sol-reprint/campaign/backers-export/')
 
     now = datetime.datetime.now()
@@ -275,10 +280,13 @@ def export_backer_report(countries=None):
 
     report, columns = open_updated_report(
         input_path,
-        replace_path)
+        replace_path,
+        from_date=from_date)
 
     export = pd.DataFrame(
         columns=export_columns)
+
+    import ipdb; ipdb.set_trace()
 
     report_entries = {}
     for index, row in enumerate(zip(*columns.values())):
@@ -301,7 +309,7 @@ def export_backer_report(countries=None):
         index=False)
 
 
-def export_spiral_report(exclude=None):
+def export_spiral_report(from_date=None, exclude=None):
     exclude = exclude or []
 
     base_path = Path('~/elabs/sol-reprint/campaign/backers-export/')
@@ -316,7 +324,8 @@ def export_spiral_report(exclude=None):
 
     report, columns = open_updated_report(
         input_path,
-        replace_path)
+        replace_path,
+        from_date=from_date)
 
     excel = read_excel_file(template_path)
 
@@ -348,16 +357,24 @@ def export_spiral_report(exclude=None):
 
 if __name__ == '__main__':
     export_type = 'crwn'
+    from_date = None
+
     if len(sys.argv) > 1:
         export_type = sys.argv[1]
 
+    if len(sys.argv) > 2:
+        from_date = datetime.datetime.strptime(sys.argv[2], '%Y-%m-%d')
+
     if export_type == 'crwn':
         export_backer_report(
+            from_date=from_date,
             countries=[
                 'US',
                 'CA'])
+
     elif export_type == 'spiral':
         export_spiral_report(
+            from_date=from_date,
             exclude=[
                 'US',
                 'CA'])
