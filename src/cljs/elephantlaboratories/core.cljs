@@ -14,6 +14,7 @@
 
 (defonce session (r/atom {:page :home}))
 
+(def shopify-page "https://b5e521-7f.myshopify.com/")
 
 (defn home-nav
   []
@@ -119,7 +120,7 @@
     [:li {:class "headernav__menu__item"}
      [:a {:href "/sol/background"} "Media"]]
     [:li {:class "headernav__menu__item"}
-     [:a {:href "/sol/buy"} "Buy"]]]])
+     [:a {:href shopify-page :target "none"} "Buy"]]]])
 
 (defn sol-header
   []
@@ -134,8 +135,8 @@
      [:p "Sol: Last Days of a Star is a strategic game of solar destruction and salvation for 1–5 players. Play as one of the five worlds orbiting the Sun, diving into the searing plasma to harvest critical energy — energy needed to fuel your escape before the Sun goes supernova. Sol has simple, easy to learn rules, a deep decision space and emergent strategy that unfolds over " 
       [:nobr "multiple plays"]"."]
      [:p {:class "buttonwrap"}
-      [:a {:href "#what", :class "button buttonwrap__button button--outline"} "Learn More"]
-      [:a {:href "/sol/buy", :class "button buttonwrap__button"} "Sign up!"]]
+      [:a {:href shopify-page :target "none" :class "button buttonwrap__button button--outline"} "BUY"]
+      [:a {:href "/sol/sign-up", :class "button buttonwrap__button"} "Sign up!"]]
      [:aside {:class "current-status"}
       [:strong "CURRENT STATUS"]
       ": Finalizing fulfillment for Sol: Last Days of a Star!"
@@ -166,7 +167,7 @@
          [:p "Sol has very little luck, but the compounding of simple actions keep the game moving quickly. The high degree of player interaction and the array of Instability Effects allow for a surprisingly customizable vibe to " 
           [:nobr "each game."]]
          [:p 
-          [:a {:href "/sol/buy", :class "button button--outline"} "Sign up!"]]]]]
+          [:a {:href "/sol/sign-up", :class "button button--outline"} "Sign up!"]]]]]
       [:h3 {:class "h3 align-center"} "Many Ways " 
        [:nobr "to Play"]]
       [:div {:class "half-and-half"}
