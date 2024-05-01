@@ -27,6 +27,9 @@
        "Elephant" [:br] "Laboratories"]]]
     [:li {:class "headernav__menu__item"}
      [:a {:href "/sol"} "Our game" 
+      [:span {:class "smallest-hide-inline"} " "]" Sol »"]]
+    [:li {:class "headernav__menu__item"}
+     [:a {:href "https://shop.elephantlaboratories.com" :target "none"} "Buy" 
       [:span {:class "smallest-hide-inline"} " "]" Sol »"]]]])
 
 (defn home-header
@@ -94,10 +97,10 @@
      [:p {:class "footer__menu__social__icons"}
       [:a {:href "https://boardgamegeek.com/boardgame/174837/sol-last-days-star", :rel "external"}
        [:img {:src "/assets/images/elabs/footer_connect_bgg_@2x.png", :alt "BoardGameGeek", :class "icon", :width "32", :height "30"}]]
-      [:a {:href "http://twitter.com/elephantnahpele", :rel "external"}
-       [:img {:src "/assets/images/elabs/footer_connect_twitter_@2x.png", :alt "Twitter", :class "icon", :width "24", :height "30"}]]
-      [:a {:href "http://facebook.com/ElephantLabsGames", :rel "external"}
-       [:img {:src "/assets/images/elabs/footer_connect_facebook_@2x.png", :alt "Facebook", :class "icon", :width "24", :height "30"}]]
+      ;; [:a {:href "http://twitter.com/elephantnahpele", :rel "external"}
+      ;;  [:img {:src "/assets/images/elabs/footer_connect_twitter_@2x.png", :alt "Twitter", :class "icon", :width "24", :height "30"}]]
+      ;; [:a {:href "http://facebook.com/ElephantLabsGames", :rel "external"}
+      ;;  [:img {:src "/assets/images/elabs/footer_connect_facebook_@2x.png", :alt "Facebook", :class "icon", :width "24", :height "30"}]]
       [:a {:href "https://www.kickstarter.com/projects/elephantlaboratories/sol-last-days-of-a-star/", :rel "external"}
        [:img {:src "/assets/images/elabs/footer_connect_kickstarter_@2x.png", :alt "Kickstarter", :class "icon", :width "19", :height "30"}]]]]]
    [:div {:class "footer__copyright footer__copyright--ele"}
@@ -114,11 +117,11 @@
      [:a {:href "/sol"} "Sol " 
       [:span {:class "headernav__menu__item--home__tagline"} "Last Days of a Star"]]]
     [:li {:class "headernav__menu__item"}
-     [:a {:href "/sol/story"} "Gameplay"]]
+     [:a {:href "/sol/gameplay"} "Gameplay"]]
     [:li {:class "headernav__menu__item"}
      [:a {:href "/sol/worlds"} "Mythos"]]
     [:li {:class "headernav__menu__item"}
-     [:a {:href "/sol/background"} "Media"]]
+     [:a {:href "/sol/media"} "Media"]]
     [:li {:class "headernav__menu__item"}
      [:a {:href shopify-page :target "none"} "Buy"]]]])
 
@@ -181,7 +184,7 @@
         [:p "Players may also choose to explore Sol as a co-op; choose quick start with “vestigial structures” already in place; or add “trigger event” cards for additional " 
          [:nobr "solar unpredictability."]]
         [:p 
-         [:a {:href "/sol/story"} "Learn more " 
+         [:a {:href "/sol/gameplay"} "Learn more " 
           [:nobr "about gameplay »"]]]]]]]
     [:div {:class "container container--dark"}
      [:div {:class "constrainer"}
@@ -233,13 +236,13 @@
          [:p "Watch how-to’s, play-throughs and interviews with Sol’s design team. Download the complete rulebook. Read all the nice things others are saying " 
           [:nobr "about Sol."]]
          [:p 
-          [:a {:href "/sol/background"}
+          [:a {:href "/sol/media"}
            [:nobr "Check out videos and links »"]]]]]
        [:div {:class "half-and-half__item half-and-half__item--light container--worldsofsol__floating-heads"}
         [:img {:src "/assets/images/portrait_ryan-sean_@2x.png", :alt "portrait_ryan-sean_@2x", :class "image--floating-head", :width "113", :height "113"}]
         [:h2 {:class "h2"} "Brothers " 
          [:nobr "in Space"]]
-        [:p "Sol is the creation of brothers Ryan Spangler and Sean Spangler, whose earliest memories involve playing—and making—board games together. Their shared passion for strategy, invention, collaboration, and the act of bringing something new into the world drove them to design a game that they continue to enjoy playing…years after " 
+        [:p "Sol is the creation of brothers Ryan Spangler and Sean Spangler, along with Jodi Sweetman. Ryan and Sean's earliest memories involve playing—and making—board games together. Their shared passion for strategy, invention, collaboration, and the act of bringing something new into the world drove them to design a game that they continue to enjoy playing…years after " 
          [:nobr "its inception."]]
         [:p "Sol is by all definitions an independent game, but it owes its existence to a vast supportive community of family, friends, and " 
          [:nobr "enthusiastic backers."]]
@@ -773,11 +776,11 @@
      [:a {:href "/organism"} "ORGANISM" 
       [:span {:class "headernav__menu__item--home__tagline"} ""]]]
     ;; [:li {:class "headernav__menu__item"}
-    ;;  [:a {:href "/sol/story/"} "Gameplay"]]
+    ;;  [:a {:href "/sol/gameplay/"} "Gameplay"]]
     ;; [:li {:class "headernav__menu__item"}
     ;;  [:a {:href "/sol/worlds/"} "Mythos"]]
     ;; [:li {:class "headernav__menu__item"}
-    ;;  [:a {:href "/sol/background/"} "Media"]]
+    ;;  [:a {:href "/sol/media/"} "Media"]]
     [:li {:class "headernav__menu__item"}
      [:a {:href "/sol/buy"} "Buy"]]]])
 
@@ -836,7 +839,7 @@
         [:p "Players may also choose to explore Sol as a co-op; choose quick start with “vestigial structures” already in place; or add “trigger event” cards for additional " 
          [:nobr "solar unpredictability."]]
         [:p 
-         [:a {:href "/sol/story"} "Learn more " 
+         [:a {:href "/sol/gameplay"} "Learn more " 
           [:nobr "about gameplay »"]]]]]]]
     [:div {:class "container container--dark"}
      [:div {:class "constrainer"}
@@ -888,7 +891,7 @@
          [:p "Watch how-to’s, play-throughs and interviews with Sol’s design team. Download the complete rulebook. Read all the nice things others are saying " 
           [:nobr "about Sol."]]
          [:p 
-          [:a {:href "/sol/background"}
+          [:a {:href "/sol/media"}
            [:nobr "Check out videos and links »"]]]]]
        [:div {:class "half-and-half__item half-and-half__item--light container--worldsofsol__floating-heads"}
         [:img {:src "/assets/images/portrait_ryan-sean_@2x.png", :alt "portrait_ryan-sean_@2x", :class "image--floating-head", :width "113", :height "113"}]
