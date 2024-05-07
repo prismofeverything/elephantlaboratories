@@ -14,7 +14,7 @@
 
 (defonce session (r/atom {:page :home}))
 
-(def shopify-page "https://b5e521-7f.myshopify.com/")
+(def shopify-page "https://shop.elephantlaboratories.com/")
 
 (defn home-nav
   []
