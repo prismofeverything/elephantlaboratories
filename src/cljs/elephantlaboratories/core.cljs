@@ -240,7 +240,9 @@
            [:nobr "Check out videos and links »"]]]]]
        [:div {:class "half-and-half__item half-and-half__item--light container--worldsofsol__floating-heads"}
         [:img {:src "/assets/images/portrait_ryan-sean_@2x.png", :alt "portrait_ryan-sean_@2x", :class "image--floating-head", :width "113", :height "113"}]
-        [:h2 {:class "h2"} "Brothers " 
+        ;; [:h2 {:class "h2"} "Brothers " 
+        ;;  [:nobr "in Space"]]
+        [:h2 {:class "h2"} "Designing " 
          [:nobr "in Space"]]
         [:p "Sol is the creation of brothers Ryan and Sean Spangler along with Jodi Sweetman. Ryan and Sean's earliest memories involve playing—and making—board games together. Their shared passion for strategy, invention, collaboration, and the act of bringing something new into the world found its voice when they met Jodi. Together, the trio designed a singular creation they continue to enjoy playing…years after."]
 
