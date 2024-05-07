@@ -242,8 +242,10 @@
         [:img {:src "/assets/images/portrait_ryan-sean_@2x.png", :alt "portrait_ryan-sean_@2x", :class "image--floating-head", :width "113", :height "113"}]
         [:h2 {:class "h2"} "Brothers " 
          [:nobr "in Space"]]
-        [:p "Sol is the creation of brothers Ryan Spangler and Sean Spangler, along with Jodi Sweetman. Ryan and Sean's earliest memories involve playing—and making—board games together. Their shared passion for strategy, invention, collaboration, and the act of bringing something new into the world drove them to design a game that they continue to enjoy playing…years after " 
-         [:nobr "its inception."]]
+        [:p "Sol is the creation of brothers Ryan and Sean Spangler along with Jodi Sweetman. Ryan and Sean's earliest memories involve playing—and making—board games together. Their shared passion for strategy, invention, collaboration, and the act of bringing something new into the world found its voice when they met Jodi. Together, the trio designed a singular creation they continue to enjoy playing…years after."]
+
+        ;; [:p "Sol is the creation of brothers Ryan Spangler and Sean Spangler, whose earliest memories involve playing—and making—board games together. Their shared passion for strategy, invention, collaboration, and the act of bringing something new into the world drove them to design a game that they continue to enjoy playing…years after " 
+        ;;  [:nobr "its inception."]]
         [:p "Sol is by all definitions an independent game, but it owes its existence to a vast supportive community of family, friends, and " 
          [:nobr "enthusiastic backers."]]
         [:p 
@@ -284,7 +286,7 @@
       [:a {:href "https://www.kickstarter.com/projects/elephantlaboratories/sol-last-days-of-a-star/", :rel "external"}
        [:img {:src "/assets/images/footer_connect_kickstarter_@2x.png", :alt "Kickstarter", :class "icon", :width "19", :height "30"}]]]]]
    [:div {:class "footer__copyright"}
-    [:p "© 2017 Elephant Laboratories, LLC. " 
+    [:p "© 2024 Elephant Laboratories, LLC. " 
      [:nobr "All rights reserved. | " 
       [:a {:href "/"} "Contact Us"]" | " 
       [:a {:href "/sol/thanks"} "Game Credits"]]]
