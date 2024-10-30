@@ -142,8 +142,7 @@
       [:a {:href "/sol/sign-up", :class "button buttonwrap__button"} "Sign up!"]]
      [:aside {:class "current-status"}
       [:strong "CURRENT STATUS"]
-      ": Finalizing fulfillment for Sol: Last Days of a Star!"
-      " - retail orders opening soon"]]]])
+      "Retail sales now available!"]]]])
 
 (defn sol-main
   []
