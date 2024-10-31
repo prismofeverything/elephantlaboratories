@@ -142,7 +142,7 @@
       [:a {:href "/sol/sign-up", :class "button buttonwrap__button"} "Sign up!"]]
      [:aside {:class "current-status"}
       [:strong "CURRENT STATUS"]
-      "Retail sales now available!"]]]])
+      ": Retail sales now available!"]]]])
 
 (defn sol-main
   []
