@@ -10,8 +10,8 @@ html, body {
 }
 
 body {
-  background: #111;
-  color: #ddd;
+  background: #0d0a14;
+  color: #c4b8d8;
   font-family: 'Raleway', -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 300;
   font-size: 16px;
@@ -31,8 +31,9 @@ body {
 .prism-sidebar {
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #222;
+  border-right: 1px solid #1e1530;
   overflow: hidden;
+  background: #09070f;
 }
 
 .prism-sort {
@@ -40,30 +41,34 @@ body {
   flex-wrap: wrap;
   gap: 0.75rem;
   padding: 0.9rem 1rem;
-  border-bottom: 1px solid #1e1e1e;
+  border-bottom: 1px solid #1a1228;
   flex-shrink: 0;
   justify-content: center;
 }
 
 .sort-btn {
   background: transparent;
-  border: 1px solid #333;
-  color: #777;
+  border: 1px solid #2e1f4a;
+  color: #7055a0;
   padding: 0.28rem 0.75rem;
   border-radius: 3px;
   cursor: pointer;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 300;
   font-size: 0.8rem;
-  transition: border-color 0.15s, color 0.15s;
+  letter-spacing: 0.08em;
+  transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
 }
 
 .sort-btn:hover {
-  border-color: #555;
-  color: #bbb;
+  border-color: #6644aa;
+  color: #b090e0;
 }
 
 .sort-btn.active {
   border-color: #a855f7;
   color: #c084fc;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.25);
 }
 
 /* Track list fills remaining sidebar height */
@@ -74,7 +79,7 @@ body {
 }
 
 .prism-tracks::-webkit-scrollbar {
-  width: 5px;
+  width: 4px;
 }
 
 .prism-tracks::-webkit-scrollbar-track {
@@ -82,7 +87,7 @@ body {
 }
 
 .prism-tracks::-webkit-scrollbar-thumb {
-  background: #2a2a2a;
+  background: #2a1a40;
   border-radius: 3px;
 }
 
@@ -94,54 +99,62 @@ body {
   gap: 0.65rem;
   padding: 0.65rem 1rem;
   cursor: pointer;
-  transition: background 0.1s;
-  border-bottom: 1px solid #191919;
+  transition: background 0.15s;
+  border-bottom: 1px solid #110d1a;
 }
 
 .track-item:hover {
-  background: #1a1a1a;
+  background: #130e1f;
 }
 
 .track-name {
   flex: 1;
   font-size: 0.88rem;
-  color: #bbb;
+  font-weight: 300;
+  color: #9880be;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: 0.03em;
+  transition: color 0.2s;
 }
 
 .track-date {
   font-size: 0.72rem;
-  color: #484848;
+  color: #3d2860;
   flex-shrink: 0;
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
 }
 
-/* ── Currently playing track — larger, more prominent ── */
+/* ── Currently playing track ─────────────────── */
 
 .track-item.playing {
   padding: 0.95rem 1rem;
-  background: #1a0d2e;
+  background: linear-gradient(90deg, #1e0a38 0%, #130820 100%);
+  border-left: 2px solid #a855f7;
+  border-bottom-color: #1e1030;
 }
 
 .track-item.playing .track-name {
   font-size: 1.05rem;
-  font-weight: 600;
-  color: #d8b4fe;
+  font-weight: 400;
+  color: #e2d0ff;
+  text-shadow: 0 0 20px rgba(200, 150, 255, 0.5),
+               0 0 40px rgba(168, 85, 247, 0.25);
 }
 
 .track-item.playing .track-date {
   font-size: 0.78rem;
-  color: #7c3aed;
+  color: #8844cc;
 }
 
 /* Audio player pinned at bottom of sidebar */
 .prism-audio-wrap {
-  border-top: 1px solid #222;
+  border-top: 1px solid #1a1228;
   padding: 0.7rem 0.9rem;
   flex-shrink: 0;
-  background: #151515;
+  background: #080610;
 }
 
 .prism-audio-wrap audio {
@@ -151,7 +164,7 @@ body {
 }
 
 .prism-audio-wrap audio::-webkit-media-controls-panel {
-  background: #1e1e1e;
+  background: #100c1c;
 }
 
 /* ── Center column: full-height cover image ──── */
@@ -160,7 +173,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #0d0d0d;
+  background: #060409;
   overflow: hidden;
 }
 
@@ -175,12 +188,22 @@ body {
 .prism-info {
   display: flex;
   flex-direction: column;
-  border-left: 1px solid #222;
+  border-left: 1px solid #1e1530;
   overflow: hidden;
   padding: 2rem 1.75rem;
+  background: #09070f;
 }
 
-/* Top half: title and date, anchored to the bottom of their flex region */
+.prism-site-title {
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: #3d2860;
+  letter-spacing: 0.18em;
+  flex-shrink: 0;
+}
+
+/* Top half: title and date anchored to bottom of their region */
 .prism-info-header {
   flex: 1;
   display: flex;
@@ -193,26 +216,35 @@ body {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 2rem;
   font-weight: 300;
-  color: #fff;
+  color: #f0e8ff;
   line-height: 1.2;
   margin-bottom: 0.45rem;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  text-shadow: 0 0 40px rgba(200, 150, 255, 0.4),
+               0 0 80px rgba(168, 85, 247, 0.2);
 }
 
 .prism-date {
-  font-size: 0.8rem;
-  color: #555;
+  font-size: 0.75rem;
+  font-weight: 300;
+  color: #5a3d88;
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0.1em;
 }
 
-/* Bottom half: description starts at the midpoint */
+/* Bottom half: description starts at midpoint */
 .prism-description {
   flex: 1;
-  color: #888;
-  font-size: 0.88rem;
-  line-height: 1.75;
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: #a090c4;
+  line-height: 1.8;
   white-space: pre-wrap;
   overflow-y: auto;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 30px rgba(168, 85, 247, 0.12);
 }
 
 .prism-description::-webkit-scrollbar {
@@ -220,14 +252,15 @@ body {
 }
 
 .prism-description::-webkit-scrollbar-thumb {
-  background: #2a2a2a;
+  background: #2a1a40;
   border-radius: 3px;
 }
 
 /* ── Loading ──────────────────────────────────── */
 
 .prism-loading {
-  color: #444;
+  color: #3d2860;
   font-size: 0.85rem;
   padding: 1.5rem 1rem;
+  letter-spacing: 0.06em;
 }

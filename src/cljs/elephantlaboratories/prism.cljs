@@ -103,9 +103,9 @@
   (let [{:keys [sorted loaded]} @state]
     [:div {:class "prism-sidebar"}
      [:div {:class "prism-sort"}
-      [sort-button "Now" :newest]
-      [sort-button "Begin" :oldest]
-      [sort-button "Random" :random]]
+      [sort-button "now" :newest]
+      [sort-button "random" :random]
+      [sort-button "begin" :oldest]]
      (if loaded
        [:ul {:class "prism-tracks"}
         (map-indexed
@@ -129,6 +129,7 @@
 ;; Right column: title + date in top half, description starting at midpoint
 (defn info-panel []
   [:div {:class "prism-info"}
+   [:p {:class "prism-site-title"} "prismofeverything"]
    (when-let [track (current-track)]
      [:<>
       [:div {:class "prism-info-header"}
