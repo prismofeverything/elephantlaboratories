@@ -37,9 +37,7 @@
       {:date "" :description ""})))
 
 (defn display-name [dir-name]
-  (->> (str/split dir-name #"[-_]")
-       (map str/capitalize)
-       (str/join " ")))
+  (str/replace dir-name #"[-_]" " "))
 
 (defn safe-name? [s]
   (and (seq s)

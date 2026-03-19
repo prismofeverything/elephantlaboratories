@@ -201,6 +201,12 @@ body {
   color: #3d2860;
   letter-spacing: 0.18em;
   flex-shrink: 0;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.prism-site-title:hover {
+  color: #7055a0;
 }
 
 /* Top half: title and date anchored to bottom of their region */
@@ -254,6 +260,141 @@ body {
 .prism-description::-webkit-scrollbar-thumb {
   background: #2a1a40;
   border-radius: 3px;
+}
+
+/* ── Catalog page ────────────────────────────── */
+
+.catalog-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #0d0a14;
+}
+
+.catalog-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid #1e1530;
+  flex-shrink: 0;
+}
+
+.catalog-site-title {
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: #c4b8d8;
+  letter-spacing: 0.2em;
+}
+
+.sort-controls {
+  position: absolute;
+  right: 2rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.col-slider {
+  position: absolute;
+  left: 2rem;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 90px;
+  height: 2px;
+  background: #2e1f4a;
+  outline: none;
+  border-radius: 1px;
+  cursor: pointer;
+}
+
+.col-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #a855f7;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.5);
+  transition: box-shadow 0.2s;
+}
+
+.col-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.8);
+}
+
+.col-slider::-moz-range-thumb {
+  width: 11px;
+  height: 11px;
+  border: none;
+  border-radius: 50%;
+  background: #a855f7;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.5);
+}
+
+.catalog-grid {
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: grid;
+  gap: 1.75rem;
+  padding: 2rem;
+  align-content: start;
+  align-items: start;
+  outline: none;
+}
+
+.catalog-grid::-webkit-scrollbar {
+  width: 5px;
+}
+
+.catalog-grid::-webkit-scrollbar-thumb {
+  background: #2a1a40;
+  border-radius: 3px;
+}
+
+.catalog-item {
+  cursor: pointer;
+  min-width: 0;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.catalog-item:hover {
+  transform: scale(1.03);
+  opacity: 0.85;
+}
+
+.catalog-cover-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 3px;
+}
+
+.catalog-cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.catalog-title {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: #9880be;
+  margin-top: 0.6rem;
+  letter-spacing: 0.03em;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ── Loading ──────────────────────────────────── */

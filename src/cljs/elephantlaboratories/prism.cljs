@@ -10,7 +10,9 @@
            :sorted        []
            :sort-order    :newest
            :current-index nil
-           :loaded        false}))
+           :loaded        false
+           :view          :catalog
+           :grid-cols     3}))
 
 (defonce audio-el (atom nil))
 
@@ -64,14 +66,23 @@
                    :sorted        sorted
                    :loaded        true
                    :current-index (when (seq sorted) 0))
-            ;; Prime the audio element with the first track so the play
-            ;; button works immediately without needing a track click first.
             (when-let [audio @audio-el]
               (when-let [first-track (first sorted)]
                 (set! (.-src audio) (:url first-track))
                 (.load audio)))))
         :error-handler
         (fn [_] (swap! state assoc :loaded true))}))
+
+;; ── Navigation ────────────────────────────────────────────────────────────────
+
+(defn go-catalog! []
+  (swap! state assoc :view :catalog))
+
+(defn go-player! [index]
+  ;; Switch view first, then wait for the player's audio element to mount
+  ;; before attempting to play — r/after-render fires after the DOM commit.
+  (swap! state assoc :view :player)
+  (r/after-render #(load-and-play! index)))
 
 ;; ── Sort control ──────────────────────────────────────────────────────────────
 
@@ -82,13 +93,61 @@
       (.pause audio)
       (set! (.-src audio) ""))))
 
-;; ── Components ────────────────────────────────────────────────────────────────
+;; ── Shared components ─────────────────────────────────────────────────────────
 
 (defn sort-button [label order]
   [:button
    {:class    (str "sort-btn" (when (= (:sort-order @state) order) " active"))
     :on-click #(set-sort! order)}
    label])
+
+(defn sort-controls []
+  [:div {:class "sort-controls"}
+   [sort-button "now" :newest]
+   [sort-button "random" :random]
+   [sort-button "begin" :oldest]])
+
+;; ── Catalog view ──────────────────────────────────────────────────────────────
+
+(defn col-slider []
+  (let [draft (r/atom (:grid-cols @state))]
+    (fn []
+      [:input {:class        "col-slider"
+               :type         "range"
+               :min          1
+               :max          13
+               :value        @draft
+               :on-change    #(reset! draft (js/parseInt (.. % -target -value)))
+               :on-mouse-up  #(swap! state assoc :grid-cols @draft)
+               :on-touch-end #(swap! state assoc :grid-cols @draft)}])))
+
+(defn catalog-item [track index]
+  [:div {:class    "catalog-item"
+         :on-click #(go-player! index)}
+   [:div {:class "catalog-cover-wrap"}
+    [:img {:class "catalog-cover" :src (:cover track) :alt (:display-name track)}]]
+   [:p {:class "catalog-title"} (:display-name track)]])
+
+(defn catalog-view []
+  (let [{:keys [sorted loaded grid-cols]} @state]
+    [:div {:class "catalog-page"}
+     [:div {:class "catalog-header"}
+      [col-slider]
+      [:h1 {:class "catalog-site-title"} "prismofeverything"]
+      [sort-controls]]
+     (if loaded
+       [:div {:class    "catalog-grid"
+              :style    {:grid-template-columns (str "repeat(" grid-cols ", 1fr)")}
+              :tab-index "0"
+              :ref      (fn [el] (when el (.focus el)))}
+        (map-indexed
+         (fn [i track]
+           ^{:key (:name track)}
+           [catalog-item track i])
+         sorted)]
+       [:p {:class "prism-loading"} "Loading…"])]))
+
+;; ── Player view ───────────────────────────────────────────────────────────────
 
 (defn track-row [track index]
   (let [playing? (= index (:current-index @state))]
@@ -98,7 +157,6 @@
      [:span {:class "track-name"} (:display-name track)]
      [:span {:class "track-date"} (:date track)]]))
 
-;; Left column: sort controls, track list, audio player
 (defn sidebar []
   (let [{:keys [sorted loaded]} @state]
     [:div {:class "prism-sidebar"}
@@ -120,16 +178,14 @@
                :on-ended next-track!
                :ref      (fn [el] (when el (reset! audio-el el)))}]]]))
 
-;; Center column: huge cover image
 (defn cover-panel []
   [:div {:class "prism-center"}
    (when-let [track (current-track)]
      [:img {:class "prism-cover" :src (:cover track) :alt (:display-name track)}])])
 
-;; Right column: title + date in top half, description starting at midpoint
 (defn info-panel []
   [:div {:class "prism-info"}
-   [:p {:class "prism-site-title"} "prismofeverything"]
+   [:p {:class "prism-site-title" :on-click go-catalog!} "prismofeverything"]
    (when-let [track (current-track)]
      [:<>
       [:div {:class "prism-info-header"}
@@ -137,12 +193,19 @@
        [:p  {:class "prism-date"}  (:date track)]]
       [:p {:class "prism-description"} (:description track)]])])
 
+(defn player-view []
+  [:div {:class "prism-layout"}
+   [sidebar]
+   [cover-panel]
+   [info-panel]])
+
+;; ── Root ──────────────────────────────────────────────────────────────────────
+
 (defn prism-home-page []
   (r/create-class
    {:component-did-mount load-tracks!
     :reagent-render
     (fn []
-      [:div {:class "prism-layout"}
-       [sidebar]
-       [cover-panel]
-       [info-panel]])}))
+      (if (= :catalog (:view @state))
+        [catalog-view]
+        [player-view]))}))
