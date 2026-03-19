@@ -10,28 +10,25 @@
            :sorted        []
            :sort-order    :newest
            :current-index nil
+           :exiting-track nil   ; track currently retreating to its grid cell
            :loaded        false
            :grid-cols     3
            :view          :catalog}))
 
-;; Audio element reference
-(defonce audio-el (atom nil))
+(defonce audio-el    (atom nil))
+(defonce cover-refs  (atom {}))   ; track-name → catalog item DOM el
+(defonce hero-ref    (atom nil))  ; main (entering) cover DOM el
 
-;; Map of track-name → catalog cover DOM element (for FLIP measurements)
-(defonce cover-refs (atom {}))
+;; Animation state for the entering cover
+(defonce hero-anim
+  (r/atom {:transform nil :transition false :opacity 1}))
 
-;; Hero cover DOM element reference
-(defonce hero-ref (atom nil))
+;; Animation state for the exiting cover (simultaneous retreat)
+(defonce exiting-anim
+  (r/atom {:transform nil :transition false :opacity 1}))
 
-;; FLIP animation state: transform string, transition flag, opacity.
-;; Single r/atom so all three update in one render.
-(defonce hero-anim (r/atom {:transform nil :transition false :opacity 1}))
-
-;; Saved playback positions: track-name → seconds
-(defonce track-times (atom {}))
-
-;; keydown handler reference for cleanup on unmount
-(defonce key-handler (atom nil))
+(defonce track-times  (atom {}))   ; track-name → saved playback seconds
+(defonce key-handler  (atom nil))  ; keydown listener ref for cleanup
 
 ;; ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -52,10 +49,7 @@
   [(+ (.-left rect) (* 0.5 (.-width rect)))
    (+ (.-top rect)  (* 0.5 (.-height rect)))])
 
-(defn flip-transform
-  "Returns a CSS transform string that makes an element at `to-rect`
-   appear to be at `from-rect`."
-  [from-rect to-rect]
+(defn flip-transform [from-rect to-rect]
   (let [[fx fy] (rect-center from-rect)
         [tx ty] (rect-center to-rect)
         dx    (- fx tx)
@@ -87,21 +81,19 @@
 
 ;; ── Grid scrolling ────────────────────────────────────────────────────────────
 
-(defn scroll-grid-to-track!
-  "Smooth-scroll the catalog grid so the given track's cell is centered
-   in the viewport — visible through the dimmed hero overlay."
-  [index]
+(defn scroll-grid-to-track! [index]
   (r/after-render
    (fn []
-     (let [track   (nth (:sorted @state) index)
-           item-el (get @cover-refs (:name track))]
-       (when item-el
-         (.scrollIntoView item-el #js {:block "center" :behavior "smooth"}))))))
+     (when (< index (count (:sorted @state)))
+       (let [track   (nth (:sorted @state) index)
+             item-el (get @cover-refs (:name track))]
+         (when item-el
+           (.scrollIntoView item-el #js {:block "center" :behavior "smooth"})))))))
 
 ;; ── Animation ─────────────────────────────────────────────────────────────────
 
 (defn enter-hero!
-  "FLIP: snap hero cover to the grid cell's position, then animate forward."
+  "FLIP: snap the entering cover to the grid cell position, then animate forward."
   [index]
   (let [track   (nth (:sorted @state) index)
         grid-el (get @cover-refs (:name track))
@@ -110,16 +102,58 @@
       (let [from-rect (.getBoundingClientRect grid-el)
             to-rect   (.getBoundingClientRect hero-el)
             transform (flip-transform from-rect to-rect)]
-        ;; Snap to grid position instantly (no transition, full opacity)
-        (reset! hero-anim {:transform transform :transition false :opacity 1})
-        ;; Next frame: release so CSS transition animates to final position
+        (reset! hero-anim {:transform transform :transition false :opacity 0})
         (js/requestAnimationFrame
          (fn []
            (reset! hero-anim {:transform nil :transition true :opacity 1})))))))
 
+(defn navigate-to!
+  "Switch to next-idx, animating out the current cover and in the next
+   cover simultaneously rather than sequentially."
+  [next-idx]
+  (when-let [audio @audio-el] (.pause audio))
+  (let [ex-track   (current-track)
+        ex-grid-el (when ex-track (get @cover-refs (:name ex-track)))
+        hero-el    @hero-ref
+        next-track (nth (:sorted @state) next-idx)]
+    (save-time!)
+    (if (and ex-track ex-grid-el hero-el)
+      (let [hero-rect      (.getBoundingClientRect hero-el)
+            ex-grid-rect   (.getBoundingClientRect ex-grid-el)
+            ;; Transform that moves the exiting cover from hero → its grid cell
+            exit-transform (flip-transform ex-grid-rect hero-rect)]
+        ;; Update state: remember exiting track, switch to new track
+        (swap! state assoc
+               :exiting-track ex-track
+               :current-index next-idx
+               :view          :hero)
+        ;; After DOM re-renders with both covers present:
+        (r/after-render
+         (fn []
+           ;; Start exiting cover retreat (from hero position toward grid)
+           (reset! exiting-anim {:transform nil :transition false :opacity 1})
+           (js/requestAnimationFrame
+            (fn []
+              (reset! exiting-anim {:transform exit-transform :transition true :opacity 0})))
+           ;; Start entering cover FLIP simultaneously
+           (enter-hero! next-idx)
+           (load-audio! next-track)))
+        ;; Clear exiting track after animation completes
+        (js/setTimeout
+         (fn []
+           (swap! state assoc :exiting-track nil)
+           (reset! exiting-anim {:transform nil :transition false :opacity 1}))
+         540))
+      ;; No exit animation possible — just enter the new track
+      (do (swap! state assoc :current-index next-idx :view :hero)
+          (r/after-render
+           (fn []
+             (enter-hero! next-idx)
+             (load-audio! next-track)))))
+    (scroll-grid-to-track! next-idx)))
+
 (defn select-track!
-  "Switch to hero view for the given sorted index, animate the cover in,
-   and scroll the grid to center this track behind the hero."
+  "Enter hero view from catalog (no simultaneous exit — nothing is playing yet)."
   [index]
   (let [track (nth (:sorted @state) index)]
     (swap! state assoc :current-index index :view :hero)
@@ -127,14 +161,10 @@
      (fn []
        (enter-hero! index)
        (load-audio! track)))
-    ;; Scroll grid concurrently so the track's cell appears centered behind the cover
     (scroll-grid-to-track! index)))
 
 (defn retreat!
-  "Animate the hero cover to its catalog grid position, then call then-fn.
-   The transform is computed so the element *ends up* visually at the grid
-   cell — the same direction as enter-hero! but applied as the target state
-   rather than the initial snap."
+  "Animate the current hero cover back to its grid cell, then call then-fn."
   [then-fn]
   (let [track   (current-track)
         grid-el (when track (get @cover-refs (:name track)))
@@ -142,68 +172,44 @@
     (if (and grid-el hero-el)
       (let [hero-rect (.getBoundingClientRect hero-el)
             grid-rect (.getBoundingClientRect grid-el)
-            ;; flip-transform(grid, hero) makes the hero element *appear* at
-            ;; the grid position — so transitioning TO this transform moves
-            ;; the cover toward the grid (shrinking in the right direction).
             transform (flip-transform grid-rect hero-rect)]
-        (reset! hero-anim {:transform transform :transition true :opacity 1})
+        (reset! hero-anim {:transform transform :transition true :opacity 0})
         (js/setTimeout then-fn 480))
       (do (reset! hero-anim {:transform nil :transition false :opacity 1})
           (then-fn)))))
 
-(defn advance-to-next!
-  "Track ended: retreat cover to grid, then bring in the next track."
-  []
-  (when-let [audio @audio-el]
-    (.pause audio))
-  (let [{:keys [current-index sorted]} @state
-        next-idx (inc current-index)]
-    (retreat!
-     (fn []
-       (swap! state assoc :view :catalog :current-index nil)
-       (reset! hero-anim {:transform nil :transition false :opacity 1})
-       (when (< next-idx (count sorted))
-         (js/setTimeout #(select-track! next-idx) 80))))))
-
 (defn dismiss!
-  "Save position, then FLIP the hero cover back to the catalog grid."
+  "Save position, retreat cover to grid, return to catalog view."
   []
-  (when-let [audio @audio-el]
-    (.pause audio))
+  (when-let [audio @audio-el] (.pause audio))
   (save-time!)
   (retreat!
    (fn []
-     (swap! state assoc :view :catalog)
+     (swap! state assoc :view :catalog :exiting-track nil)
      (reset! hero-anim {:transform nil :transition false :opacity 1}))))
 
-(defn go-prev!
-  "Save position, retreat current cover, then bring in the previous track."
-  []
-  (when-let [audio @audio-el] (.pause audio))
+(defn go-prev! []
   (let [{:keys [current-index]} @state]
     (when (and current-index (pos? current-index))
-      (save-time!)
-      (let [prev-idx (dec current-index)]
-        (retreat!
-         (fn []
-           (swap! state assoc :view :catalog :current-index nil)
-           (reset! hero-anim {:transform nil :transition false :opacity 1})
-           (js/setTimeout #(select-track! prev-idx) 80)))))))
+      (navigate-to! (dec current-index)))))
 
-(defn go-next!
-  "Save position, retreat current cover, then bring in the next track."
-  []
-  (when-let [audio @audio-el] (.pause audio))
+(defn go-next! []
   (let [{:keys [current-index sorted]} @state]
     (when current-index
       (let [next-idx (inc current-index)]
         (when (< next-idx (count sorted))
-          (save-time!)
-          (retreat!
-           (fn []
-             (swap! state assoc :view :catalog :current-index nil)
-             (reset! hero-anim {:transform nil :transition false :opacity 1})
-             (js/setTimeout #(select-track! next-idx) 80))))))))
+          (navigate-to! next-idx))))))
+
+(defn advance-to-next!
+  "Called when a track ends naturally."
+  []
+  (let [{:keys [current-index sorted]} @state
+        next-idx (inc current-index)]
+    (if (< next-idx (count sorted))
+      (navigate-to! next-idx)
+      ;; Last track: just retreat to catalog
+      (do (when-let [audio @audio-el] (.pause audio))
+          (dismiss!)))))
 
 ;; ── Sort ──────────────────────────────────────────────────────────────────────
 
@@ -229,19 +235,21 @@
 
 ;; ── Hero overlay ──────────────────────────────────────────────────────────────
 
+(defn cover-anim-style [anim-atom]
+  (let [{:keys [transform transition opacity]} @anim-atom]
+    (cond-> {:transform (or transform "none")
+             :opacity   (or opacity 1)}
+      transition (assoc :transition
+                        "transform 0.48s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.45s ease"))))
+
 (defn hero-overlay []
-  (let [track     (current-track)
+  (let [track    (current-track)
+        ex-track (:exiting-track @state)
         {:keys [current-index sorted]} @state
-        has-prev  (and current-index (pos? current-index))
-        has-next  (and current-index (< (inc current-index) (count sorted)))
-        {:keys [transform transition opacity]} @hero-anim
-        cover-style (cond-> {:transform (or transform "none")
-                             :opacity   (or opacity 1)}
-                      transition (assoc :transition
-                                        "transform 0.48s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.45s ease"))]
+        has-prev (and current-index (pos? current-index))
+        has-next (and current-index (< (inc current-index) (count sorted)))]
     [:div {:class "hero-overlay"}
 
-     ;; ── Balance spacer (invisible, mirrors sidebar width so cover stays centered) ──
      [:div {:class "hero-balance"}]
 
      ;; ── Left nav ──
@@ -250,11 +258,21 @@
             :on-click #(when has-prev (go-prev!))}
       [:span {:class "hero-nav-arrow"} "‹"]]
 
-     ;; ── Cover (FLIP target — clicking retreats it to the grid) ──
+     ;; ── Cover area: exiting cover retreats while entering cover arrives ──
      [:div {:class "hero-cover-area"}
+
+      ;; Exiting cover — retreats to its grid cell simultaneously with the enter
+      (when ex-track
+        [:div {:class "hero-exiting-cover"
+               :style (cover-anim-style exiting-anim)}
+         [:img {:class "hero-main-img"
+                :src   (:cover ex-track)
+                :alt   (:display-name ex-track)}]])
+
+      ;; Entering cover — FLIP from grid cell to hero position; click to dismiss
       [:div {:class    "hero-main-cover"
              :ref      (fn [el] (reset! hero-ref el))
-             :style    cover-style
+             :style    (cover-anim-style hero-anim)
              :on-click #(dismiss!)}
        [:img {:class "hero-main-img"
               :src   (:cover track)
@@ -266,7 +284,7 @@
             :on-click #(when has-next (go-next!))}
       [:span {:class "hero-nav-arrow"} "›"]]
 
-     ;; ── Sidebar: title + sort at top, info centered, audio at bottom ──
+     ;; ── Sidebar ──
      [:div {:class "hero-sidebar"}
       [:div {:class "hero-sidebar-top"}
        [:span {:class "hero-site-title" :on-click #(dismiss!)} "prismofeverything"]
@@ -342,10 +360,7 @@
                              (:tracks data))
                 order  (:sort-order @state)
                 sorted (sorted-tracks tracks order)]
-            (swap! state assoc
-                   :tracks  tracks
-                   :sorted  sorted
-                   :loaded  true)))
+            (swap! state assoc :tracks tracks :sorted sorted :loaded true)))
         :error-handler
         (fn [_] (swap! state assoc :loaded true))}))
 

@@ -214,12 +214,16 @@ body {
   display: flex;
   flex-direction: row;
   align-items: stretch;
+  /* When balance + sidebar are both capped, center the whole group */
+  justify-content: center;
 }
 
-/* Invisible spacer that mirrors the sidebar's flex share */
+/* Invisible spacer — must match sidebar's flex + max-width exactly
+   so the cover stays centered as both sides cap at the same size. */
 .hero-balance {
   flex: 1;
   min-width: 0;
+  max-width: 380px;
   pointer-events: none;
 }
 
