@@ -6,6 +6,7 @@
    [goog.history.EventType :as HistoryEventType]
    [markdown.core :refer [md->html]]
    [elephantlaboratories.ajax :as ajax]
+   [elephantlaboratories.prism :as prism]
    [ajax.core :refer [GET POST]]
    [reitit.core :as reitit]
    [clojure.string :as string])
@@ -1027,7 +1028,8 @@
    :sol-buy #'sol-buy-page
    :sol-thanks #'sol-thanks-page
    :sol-complete #'sol-complete-page
-   :organism-home #'organism-home-page})
+   :organism-home #'organism-home-page
+   :prism-home #'prism/prism-home-page})
 
 (defn page
   []

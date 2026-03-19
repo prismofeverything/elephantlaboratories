@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Prism of Everything</title>
+    <link rel="stylesheet" href="/assets/styles/prism.css">
+  </head>
+  <body>
+    <div id="content"></div>
+
+    <script type="text/javascript">
+      var csrfToken = "{{csrf-token}}";
+      var currentPage = "{{current-page}}";
+    </script>
+    {% script "/js/app.js" %}
+  </body>
+</html>

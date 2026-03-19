@@ -1,0 +1,251 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: #111;
+  color: #ddd;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* ── Layout ──────────────────────────────────── */
+
+.prism-app {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 6rem; /* bottom pad clears fixed player bar */
+}
+
+/* ── Now-playing panel: cover art + info ─────── */
+
+.prism-now-playing {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  min-height: 180px;
+}
+
+.prism-cover {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+  background: #1e1e1e;
+}
+
+.prism-now-playing-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.now-playing-label {
+  font-size: 0.72rem;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 0.35rem;
+}
+
+.prism-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.3;
+  margin-bottom: 0.25rem;
+}
+
+.prism-date {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.prism-description {
+  color: #999;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+/* ── Sort controls ───────────────────────────── */
+
+.prism-sort {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  align-items: center;
+}
+
+.prism-sort-label {
+  font-size: 0.8rem;
+  color: #555;
+  margin-right: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sort-btn {
+  background: transparent;
+  border: 1px solid #333;
+  color: #777;
+  padding: 0.3rem 0.8rem;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.sort-btn:hover {
+  border-color: #555;
+  color: #bbb;
+}
+
+.sort-btn.active {
+  border-color: #a855f7;
+  color: #c084fc;
+}
+
+/* ── Track list ──────────────────────────────── */
+
+.prism-tracks {
+  list-style: none;
+  max-height: calc(100vh - 420px);
+  overflow-y: auto;
+  border-radius: 4px;
+}
+
+.prism-tracks::-webkit-scrollbar {
+  width: 6px;
+}
+
+.prism-tracks::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+.prism-tracks::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+
+.track-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.1s;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.track-item:hover {
+  background: #1e1e1e;
+}
+
+.track-item.playing {
+  background: #1e1030;
+}
+
+.track-number {
+  font-size: 0.8rem;
+  color: #555;
+  width: 1.6rem;
+  text-align: right;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.track-item.playing .track-number {
+  color: #a855f7;
+}
+
+.track-name {
+  flex: 1;
+  font-size: 0.92rem;
+  color: #ccc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-item.playing .track-name {
+  color: #d8b4fe;
+}
+
+.track-date {
+  font-size: 0.78rem;
+  color: #555;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.track-item.playing .track-date {
+  color: #7e22ce;
+}
+
+/* ── Loading state ───────────────────────────── */
+
+.prism-loading {
+  color: #555;
+  font-size: 0.9rem;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+/* ── Fixed bottom player ─────────────────────── */
+
+.prism-player {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #181818;
+  border-top: 1px solid #2a2a2a;
+  padding: 0.75rem 1.5rem;
+  z-index: 100;
+}
+
+.prism-player-inner {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.prism-player audio {
+  width: 100%;
+  height: 32px;
+  accent-color: #a855f7;
+}
+
+.prism-player audio::-webkit-media-controls-panel {
+  background: #222;
+}
+
+/* ── Responsive ──────────────────────────────── */
+
+@media (max-width: 540px) {
+  .prism-now-playing {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .prism-cover {
+    width: 140px;
+    height: 140px;
+  }
+
+  .prism-sort {
+    flex-wrap: wrap;
+  }
+}

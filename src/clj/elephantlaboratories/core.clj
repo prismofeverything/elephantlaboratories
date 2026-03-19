@@ -1,6 +1,7 @@
 (ns elephantlaboratories.core
   (:require
     [elephantlaboratories.handler :as handler]
+    [elephantlaboratories.prismofeverything.handler :as prism-handler]
     [elephantlaboratories.nrepl :as nrepl]
     [luminus.http-server :as http]
     [elephantlaboratories.config :refer [env]]
@@ -31,6 +32,14 @@
         (select-keys [:handler :host :port])))
   :stop
   (http/stop http-server))
+
+(mount/defstate ^{:on-reload :noop} prism-server
+  :start
+  (http/start
+    {:handler (prism-handler/prism-app)
+     :port    (or (:prism-port env) 21113)})
+  :stop
+  (http/stop prism-server))
 
 (mount/defstate ^{:on-reload :noop} repl-server
   :start
