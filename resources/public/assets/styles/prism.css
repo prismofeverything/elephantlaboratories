@@ -18,33 +18,7 @@ body {
   line-height: 1.5;
 }
 
-/* ── Three-column full-viewport layout ───────── */
-
-.prism-layout {
-  display: grid;
-  grid-template-columns: 360px 1fr 380px;
-  height: 100vh;
-}
-
-/* ── Left column: sort + track list + player ─── */
-
-.prism-sidebar {
-  display: flex;
-  flex-direction: column;
-  border-right: 1px solid #1e1530;
-  overflow: hidden;
-  background: #09070f;
-}
-
-.prism-sort {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  padding: 0.9rem 1rem;
-  border-bottom: 1px solid #1a1228;
-  flex-shrink: 0;
-  justify-content: center;
-}
+/* ── Sort buttons (shared) ─────────────────────────── */
 
 .sort-btn {
   background: transparent;
@@ -71,204 +45,17 @@ body {
   box-shadow: 0 0 12px rgba(168, 85, 247, 0.25);
 }
 
-/* Track list fills remaining sidebar height */
-.prism-tracks {
-  list-style: none;
-  flex: 1;
-  overflow-y: auto;
-}
-
-.prism-tracks::-webkit-scrollbar {
-  width: 4px;
-}
-
-.prism-tracks::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.prism-tracks::-webkit-scrollbar-thumb {
-  background: #2a1a40;
-  border-radius: 3px;
-}
-
-/* ── Track rows ──────────────────────────────── */
-
-.track-item {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.65rem 1rem;
-  cursor: pointer;
-  transition: background 0.15s;
-  border-bottom: 1px solid #110d1a;
-}
-
-.track-item:hover {
-  background: #130e1f;
-}
-
-.track-name {
-  flex: 1;
-  font-size: 0.88rem;
-  font-weight: 300;
-  color: #9880be;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  letter-spacing: 0.03em;
-  transition: color 0.2s;
-}
-
-.track-date {
-  font-size: 0.72rem;
-  color: #3d2860;
-  flex-shrink: 0;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
-}
-
-/* ── Currently playing track ─────────────────── */
-
-.track-item.playing {
-  padding: 0.95rem 1rem;
-  background: linear-gradient(90deg, #1e0a38 0%, #130820 100%);
-  border-left: 2px solid #a855f7;
-  border-bottom-color: #1e1030;
-}
-
-.track-item.playing .track-name {
-  font-size: 1.05rem;
-  font-weight: 400;
-  color: #e2d0ff;
-  text-shadow: 0 0 20px rgba(200, 150, 255, 0.5),
-               0 0 40px rgba(168, 85, 247, 0.25);
-}
-
-.track-item.playing .track-date {
-  font-size: 0.78rem;
-  color: #8844cc;
-}
-
-/* Audio player pinned at bottom of sidebar */
-.prism-audio-wrap {
-  border-top: 1px solid #1a1228;
-  padding: 0.7rem 0.9rem;
-  flex-shrink: 0;
-  background: #080610;
-}
-
-.prism-audio-wrap audio {
-  width: 100%;
-  height: 32px;
-  accent-color: #a855f7;
-}
-
-.prism-audio-wrap audio::-webkit-media-controls-panel {
-  background: #100c1c;
-}
-
-/* ── Center column: full-height cover image ──── */
-
-.prism-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #060409;
-  overflow: hidden;
-}
-
-.prism-cover {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-/* ── Right column: title/date above midpoint, description at midpoint ── */
-
-.prism-info {
-  display: flex;
-  flex-direction: column;
-  border-left: 1px solid #1e1530;
-  overflow: hidden;
-  padding: 2rem 1.75rem;
-  background: #09070f;
-}
-
-.prism-site-title {
-  font-family: 'Raleway', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 300;
-  color: #3d2860;
-  letter-spacing: 0.18em;
-  flex-shrink: 0;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.prism-site-title:hover {
-  color: #7055a0;
-}
-
-/* Top half: title and date anchored to bottom of their region */
-.prism-info-header {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding-bottom: 1.5rem;
-}
-
-.prism-title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 2rem;
-  font-weight: 300;
-  color: #f0e8ff;
-  line-height: 1.2;
-  margin-bottom: 0.45rem;
-  letter-spacing: 0.04em;
-  overflow-wrap: break-word;
-  word-break: break-word;
-  text-shadow: 0 0 40px rgba(200, 150, 255, 0.4),
-               0 0 80px rgba(168, 85, 247, 0.2);
-}
-
-.prism-date {
-  font-size: 0.75rem;
-  font-weight: 300;
-  color: #5a3d88;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.1em;
-}
-
-/* Bottom half: description starts at midpoint */
-.prism-description {
-  flex: 1;
-  font-size: 0.9rem;
-  font-weight: 300;
-  color: #a090c4;
-  line-height: 1.8;
-  white-space: pre-wrap;
-  overflow-y: auto;
-  letter-spacing: 0.02em;
-  text-shadow: 0 0 30px rgba(168, 85, 247, 0.12);
-}
-
-.prism-description::-webkit-scrollbar {
-  width: 4px;
-}
-
-.prism-description::-webkit-scrollbar-thumb {
-  background: #2a1a40;
-  border-radius: 3px;
-}
-
-/* ── Catalog page ────────────────────────────── */
+/* ── Catalog page ──────────────────────────────────── */
 
 .catalog-page {
   height: 100vh;
   display: flex;
   flex-direction: column;
   background: #0d0a14;
+}
+
+.catalog-page--dim {
+  pointer-events: none;
 }
 
 .catalog-header {
@@ -289,12 +76,18 @@ body {
   letter-spacing: 0.2em;
 }
 
+/* Absolute-positioned inside catalog-header */
 .sort-controls {
   position: absolute;
   right: 2rem;
   display: flex;
   gap: 0.75rem;
   align-items: center;
+}
+
+/* Inside hero sidebar: flow normally */
+.hero-sidebar-top .sort-controls {
+  position: static;
 }
 
 .col-slider {
@@ -346,6 +139,7 @@ body {
   align-content: start;
   align-items: start;
   outline: none;
+  scroll-behavior: smooth;
 }
 
 .catalog-grid::-webkit-scrollbar {
@@ -397,11 +191,202 @@ body {
   text-overflow: ellipsis;
 }
 
-/* ── Loading ──────────────────────────────────── */
+/* ── Loading ───────────────────────────────────────── */
 
 .prism-loading {
   color: #3d2860;
   font-size: 0.85rem;
   padding: 1.5rem 1rem;
   letter-spacing: 0.06em;
+}
+
+/* ── Hero overlay ──────────────────────────────────── */
+
+/* Flex row: [balance] [←] [cover] [→] [sidebar]
+   balance and sidebar both have flex:1 — they share the remaining space
+   equally, which keeps the cover perfectly centered regardless of
+   viewport size. */
+.hero-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(10, 7, 18, 0.88);
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+/* Invisible spacer that mirrors the sidebar's flex share */
+.hero-balance {
+  flex: 1;
+  min-width: 0;
+  pointer-events: none;
+}
+
+/* ── Navigation arrows ────────────────────────────── */
+
+.hero-nav {
+  width: 64px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+  z-index: 2;
+}
+
+.hero-nav:hover {
+  background: rgba(168, 85, 247, 0.06);
+}
+
+.hero-nav--disabled {
+  opacity: 0.15;
+  cursor: default;
+  pointer-events: none;
+}
+
+.hero-nav-arrow {
+  font-size: 2.8rem;
+  color: #4a3070;
+  line-height: 1;
+  font-weight: 200;
+  transition: color 0.2s;
+}
+
+.hero-nav:hover .hero-nav-arrow {
+  color: #a855f7;
+}
+
+/* ── Cover — full viewport height, square, centered ── */
+
+/* aspect-ratio: 1 with height: 100vh makes it a square filling the screen
+   top-to-bottom. The balance + sidebar flex:1 shares keep it centered. */
+.hero-cover-area {
+  height: 100vh;
+  aspect-ratio: 1;
+  flex-shrink: 0;
+  position: relative;
+  /* Safety cap: never wider than the space available between navs + sidebar */
+  max-width: calc(100vw - 128px - 280px);
+}
+
+/* FLIP target. Clicking retreats the cover back to the grid. */
+.hero-main-cover {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  will-change: transform, opacity;
+}
+
+.hero-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Sidebar ──────────────────────────────────────── */
+
+.hero-sidebar {
+  flex: 1;
+  min-width: 0;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem 1.75rem;
+  overflow: hidden;
+}
+
+.hero-sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  gap: 1rem;
+}
+
+.hero-site-title {
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: #3d2860;
+  letter-spacing: 0.18em;
+  cursor: pointer;
+  transition: color 0.2s;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.hero-site-title:hover {
+  color: #7055a0;
+}
+
+/* Info: title above, description centered, audio at bottom */
+.hero-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem 0;
+  min-height: 0;
+}
+
+.hero-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 2.25rem;
+  font-weight: 300;
+  color: #f0e8ff;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  overflow-wrap: break-word;
+  text-shadow: 0 0 40px rgba(200, 150, 255, 0.4),
+               0 0 80px rgba(168, 85, 247, 0.2);
+}
+
+.hero-date {
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: #5a3d88;
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-description {
+  font-size: 0.88rem;
+  font-weight: 300;
+  color: #8878b0;
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+  overflow-y: auto;
+  max-height: 30vh;
+  flex-shrink: 1;
+}
+
+.hero-description::-webkit-scrollbar {
+  width: 3px;
+}
+
+.hero-description::-webkit-scrollbar-thumb {
+  background: #2a1a40;
+  border-radius: 3px;
+}
+
+/* Audio at the bottom of the sidebar */
+.hero-audio {
+  flex-shrink: 0;
+  padding-top: 0.5rem;
+}
+
+.hero-audio audio {
+  width: 100%;
+  height: 32px;
+  accent-color: #a855f7;
+}
+
+.hero-audio audio::-webkit-media-controls-panel {
+  background: #100c1c;
 }

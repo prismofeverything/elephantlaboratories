@@ -1,4 +1,4 @@
 {:prod true
  :port 3000
  :prism-port 21113
- :prism-music-dir "/path/to/your/music"}
+ :prism-music-dir "/home/ryan/tracks"}
