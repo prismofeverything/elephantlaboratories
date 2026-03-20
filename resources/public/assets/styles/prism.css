@@ -61,11 +61,25 @@ body {
 .catalog-header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  position: relative;
+  justify-content: space-between;
   padding: 1.25rem 2rem;
   border-bottom: 1px solid #1e1530;
   flex-shrink: 0;
+  position: relative;
+  z-index: 101;
+}
+
+/* In play view: float the header transparently over the overlay */
+.catalog-page--dim .catalog-header {
+  pointer-events: auto;
+  background: transparent;
+  border-bottom-color: transparent;
+}
+
+.catalog-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
 }
 
 .catalog-site-title {
@@ -76,23 +90,18 @@ body {
   letter-spacing: 0.2em;
 }
 
-/* Absolute-positioned inside catalog-header */
 .sort-controls {
-  position: absolute;
-  right: 2rem;
   display: flex;
   gap: 0.75rem;
   align-items: center;
 }
 
-/* Inside hero sidebar: flow normally */
-.hero-sidebar-top .sort-controls {
-  position: static;
+/* More breathing room between sort buttons in the catalog header */
+.catalog-header .sort-controls {
+  gap: 1.5rem;
 }
 
 .col-slider {
-  position: absolute;
-  left: 2rem;
   -webkit-appearance: none;
   appearance: none;
   width: 90px;
@@ -202,7 +211,13 @@ body {
 
 /* ── Hero overlay ──────────────────────────────────── */
 
-/* Flex row: [balance] [←] [cover] [→] [sidebar]
+/* On desktop the cover-row wrapper is transparent to the parent flex —
+   its children behave as direct flex children of hero-overlay. */
+.hero-cover-row {
+  display: contents;
+}
+
+/* Flex row: [balance] [cover-row: ← cover →] [sidebar]
    balance and sidebar both have flex:1 — they share the remaining space
    equally, which keeps the cover perfectly centered regardless of
    viewport size. */
@@ -218,8 +233,8 @@ body {
   justify-content: center;
 }
 
-/* Invisible spacer — must match sidebar's flex + max-width exactly
-   so the cover stays centered as both sides cap at the same size. */
+/* Left counterweight — matches sidebar's flex + max-width so the cover
+   stays perfectly centered. */
 .hero-balance {
   flex: 1;
   min-width: 0;
@@ -304,29 +319,6 @@ body {
   overflow: hidden;
 }
 
-.hero-sidebar-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-  gap: 1rem;
-}
-
-.hero-site-title {
-  font-family: 'Raleway', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 300;
-  color: #3d2860;
-  letter-spacing: 0.18em;
-  cursor: pointer;
-  transition: color 0.2s;
-  user-select: none;
-  white-space: nowrap;
-}
-
-.hero-site-title:hover {
-  color: #7055a0;
-}
 
 /* Info: title above, description centered, audio at bottom */
 .hero-info {
@@ -393,4 +385,78 @@ body {
 
 .hero-audio audio::-webkit-media-controls-panel {
   background: #100c1c;
+}
+
+/* ── Mobile portrait ───────────────────────────────── */
+
+@media (max-width: 640px) {
+
+  /* Stack the overlay as a column: [sidebar-top] [cover-row] [info] [audio] */
+  .hero-overlay {
+    flex-direction: column;
+    align-items: stretch;
+    background: #0d0a14;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Spacer not needed in column layout */
+  .hero-balance {
+    display: none;
+  }
+
+  /* Restore the wrapper as a real flex row so nav arrows flank the cover */
+  .hero-cover-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    flex-shrink: 0;
+  }
+
+  /* Cover fills the row between the two nav arrows */
+  .hero-cover-area {
+    flex: 1;
+    min-width: 0;
+    height: auto;
+    max-width: 100%;
+  }
+
+  /* Narrow the arrows so the cover gets most of the width */
+  .hero-nav {
+    width: 40px;
+    flex-shrink: 0;
+  }
+
+  .hero-nav-arrow {
+    font-size: 2rem;
+  }
+
+  /* Sidebar flows naturally below the cover */
+  .hero-sidebar {
+    max-width: 100%;
+    justify-content: flex-start;
+    padding: 1rem 1.25rem 1.5rem;
+    gap: 0.75rem;
+    overflow: visible;
+  }
+
+.hero-title {
+    font-size: 1.75rem;
+  }
+
+  .hero-info {
+    padding: 0;
+    gap: 0.5rem;
+  }
+
+  /* Let description grow naturally rather than being capped at 30vh */
+  .hero-description {
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  .hero-audio {
+    padding-top: 0.5rem;
+  }
 }

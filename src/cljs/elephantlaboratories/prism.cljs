@@ -28,6 +28,7 @@
   (r/atom {:transform nil :transition false :opacity 1}))
 
 (defonce track-times  (atom {}))   ; track-name → saved playback seconds
+(defonce saved-volume (atom 1.0))  ; persists across hero mount/unmount
 (defonce key-handler  (atom nil))  ; keydown listener ref for cleanup
 
 ;; ── Helpers ──────────────────────────────────────────────────────────────────
@@ -79,6 +80,19 @@
           (.addEventListener audio "loadedmetadata" on-meta))
         (.play audio)))))
 
+;; ── URL / deep-link ──────────────────────────────────────────────────────────
+
+(defn set-track-url! [track]
+  (.replaceState js/history nil "" (str "/#" (js/encodeURIComponent (:name track)))))
+
+(defn clear-track-url! []
+  (.replaceState js/history nil "" "/"))
+
+(defn url-track-name []
+  (let [hash (.-hash js/location)]
+    (when (seq hash)
+      (js/decodeURIComponent (subs hash 1)))))
+
 ;; ── Grid scrolling ────────────────────────────────────────────────────────────
 
 (defn scroll-grid-to-track! [index]
@@ -122,12 +136,17 @@
             ex-grid-rect   (.getBoundingClientRect ex-grid-el)
             ;; Transform that moves the exiting cover from hero → its grid cell
             exit-transform (flip-transform ex-grid-rect hero-rect)]
+        ;; Hide the entering cover before the swap so it doesn't flash at hero
+        ;; position for one paint before enter-hero! snaps it to grid position.
+        ;; Reagent batches this reset with the swap below into a single render.
+        (reset! hero-anim {:transform nil :transition false :opacity 0})
         ;; Update state: remember exiting track, switch to new track
         (swap! state assoc
                :exiting-track ex-track
                :current-index next-idx
                :view          :hero)
         ;; After DOM re-renders with both covers present:
+        (set-track-url! next-track)
         (r/after-render
          (fn []
            ;; Start exiting cover retreat (from hero position toward grid)
@@ -156,6 +175,7 @@
   "Enter hero view from catalog (no simultaneous exit — nothing is playing yet)."
   [index]
   (let [track (nth (:sorted @state) index)]
+    (set-track-url! track)
     (swap! state assoc :current-index index :view :hero)
     (r/after-render
      (fn []
@@ -183,6 +203,7 @@
   []
   (when-let [audio @audio-el] (.pause audio))
   (save-time!)
+  (clear-track-url!)
   (retreat!
    (fn []
      (swap! state assoc :view :catalog :exiting-track nil)
@@ -252,43 +273,43 @@
 
      [:div {:class "hero-balance"}]
 
-     ;; ── Left nav ──
-     [:div {:class    (str "hero-nav hero-nav--left"
-                           (when-not has-prev " hero-nav--disabled"))
-            :on-click #(when has-prev (go-prev!))}
-      [:span {:class "hero-nav-arrow"} "‹"]]
+     ;; ── Cover row: nav arrows + cover grouped so mobile can flex them as a row ──
+     [:div {:class "hero-cover-row"}
 
-     ;; ── Cover area: exiting cover retreats while entering cover arrives ──
-     [:div {:class "hero-cover-area"}
+      ;; Left nav
+      [:div {:class    (str "hero-nav hero-nav--left"
+                            (when-not has-prev " hero-nav--disabled"))
+             :on-click #(when has-prev (go-prev!))}
+       [:span {:class "hero-nav-arrow"} "‹"]]
 
-      ;; Exiting cover — retreats to its grid cell simultaneously with the enter
-      (when ex-track
-        [:div {:class "hero-exiting-cover"
-               :style (cover-anim-style exiting-anim)}
-         [:img {:class "hero-main-img"
-                :src   (:cover ex-track)
-                :alt   (:display-name ex-track)}]])
+      ;; Cover area: exiting cover retreats while entering cover arrives
+      [:div {:class "hero-cover-area"}
 
-      ;; Entering cover — FLIP from grid cell to hero position; click to dismiss
-      [:div {:class    "hero-main-cover"
-             :ref      (fn [el] (reset! hero-ref el))
-             :style    (cover-anim-style hero-anim)
-             :on-click #(dismiss!)}
-       [:img {:class "hero-main-img"
-              :src   (:cover track)
-              :alt   (:display-name track)}]]]
+       ;; Exiting cover — retreats to its grid cell simultaneously with the enter
+       (when ex-track
+         [:div {:class "hero-exiting-cover"
+                :style (cover-anim-style exiting-anim)}
+          [:img {:class "hero-main-img"
+                 :src   (:cover ex-track)
+                 :alt   (:display-name ex-track)}]])
 
-     ;; ── Right nav ──
-     [:div {:class    (str "hero-nav hero-nav--right"
-                           (when-not has-next " hero-nav--disabled"))
-            :on-click #(when has-next (go-next!))}
-      [:span {:class "hero-nav-arrow"} "›"]]
+       ;; Entering cover — FLIP from grid cell to hero position; click to dismiss
+       [:div {:class    "hero-main-cover"
+              :ref      (fn [el] (reset! hero-ref el))
+              :style    (cover-anim-style hero-anim)
+              :on-click #(dismiss!)}
+        [:img {:class "hero-main-img"
+               :src   (:cover track)
+               :alt   (:display-name track)}]]]
+
+      ;; Right nav
+      [:div {:class    (str "hero-nav hero-nav--right"
+                            (when-not has-next " hero-nav--disabled"))
+             :on-click #(when has-next (go-next!))}
+       [:span {:class "hero-nav-arrow"} "›"]]]
 
      ;; ── Sidebar ──
      [:div {:class "hero-sidebar"}
-      [:div {:class "hero-sidebar-top"}
-       [:span {:class "hero-site-title" :on-click #(dismiss!)} "prismofeverything"]
-       [sort-controls]]
       [:div {:class "hero-info"}
        [:h1 {:class "hero-title"} (:display-name track)]
        [:p  {:class "hero-date"}  (:date track)]
@@ -297,7 +318,10 @@
        [:audio {:id       "prism-audio"
                 :controls true
                 :on-ended advance-to-next!
-                :ref      (fn [el] (when el (reset! audio-el el)))}]]]]))
+                :ref      (fn [el]
+                           (when el
+                             (reset! audio-el el)
+                             (r/after-render #(set! (.-volume el) @saved-volume))))}]]]]))
 
 ;; ── Catalog ───────────────────────────────────────────────────────────────────
 
@@ -328,8 +352,9 @@
   (let [{:keys [sorted loaded grid-cols view]} @state]
     [:div {:class (str "catalog-page" (when (= view :hero) " catalog-page--dim"))}
      [:div {:class "catalog-header"}
-      [col-slider]
-      [:h1 {:class "catalog-site-title"} "prismofeverything"]
+      [:div {:class "catalog-header-left"}
+       [:h1 {:class "catalog-site-title"} "prismofeverything"]
+       [col-slider]]
       [sort-controls]]
      (if loaded
        [:div {:class     "catalog-grid"
@@ -360,7 +385,12 @@
                              (:tracks data))
                 order  (:sort-order @state)
                 sorted (sorted-tracks tracks order)]
-            (swap! state assoc :tracks tracks :sorted sorted :loaded true)))
+            (swap! state assoc :tracks tracks :sorted sorted :loaded true)
+            ;; Open a track from the URL hash if present
+            (when-let [track-name (url-track-name)]
+              (let [idx (.indexOf (mapv :name sorted) track-name)]
+                (when (>= idx 0)
+                  (r/after-render #(select-track! idx)))))))
         :error-handler
         (fn [_] (swap! state assoc :loaded true))}))
 
@@ -372,10 +402,46 @@
     (fn [_]
       (load-tracks!)
       (let [handler (fn [e]
-                      (when (= :hero (:view @state))
+                      (let [view (:view @state)]
                         (case (.-key e)
-                          "ArrowLeft"  (do (.preventDefault e) (go-prev!))
-                          "ArrowRight" (do (.preventDefault e) (go-next!))
+                          ("Enter" "Escape")
+                          (cond
+                            (= view :catalog)
+                            (do (.preventDefault e)
+                                (select-track! (or (:current-index @state) 0)))
+                            (= view :hero)
+                            (do (.preventDefault e) (dismiss!)))
+
+                          " "
+                          (when (= view :hero)
+                            (.preventDefault e)
+                            (when-let [audio @audio-el]
+                              (if (.-paused audio) (.play audio) (.pause audio))))
+
+                          "ArrowLeft"
+                          (when (= view :hero)
+                            (.preventDefault e) (go-prev!))
+
+                          "ArrowRight"
+                          (when (= view :hero)
+                            (.preventDefault e) (go-next!))
+
+                          "ArrowUp"
+                          (when (= view :hero)
+                            (.preventDefault e)
+                            (when-let [audio @audio-el]
+                              (let [v (min 1.0 (+ (.-volume audio) 0.1))]
+                                (set! (.-volume audio) v)
+                                (reset! saved-volume v))))
+
+                          "ArrowDown"
+                          (when (= view :hero)
+                            (.preventDefault e)
+                            (when-let [audio @audio-el]
+                              (let [v (max 0.0 (- (.-volume audio) 0.1))]
+                                (set! (.-volume audio) v)
+                                (reset! saved-volume v))))
+
                           nil)))]
         (reset! key-handler handler)
         (.addEventListener js/document "keydown" handler)))
