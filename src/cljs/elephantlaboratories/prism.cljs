@@ -67,7 +67,7 @@
         (when (pos? t)
           (swap! track-times assoc (:name track) t))))))
 
-(defn load-audio! [track]
+(defn load-audio! [track play?]
   (when-let [audio @audio-el]
     (let [saved (get @track-times (:name track) 0)]
       (set! (.-src audio) (:url track))
@@ -76,9 +76,30 @@
         (letfn [(on-meta []
                   (.removeEventListener audio "loadedmetadata" on-meta)
                   (set! (.-currentTime audio) saved)
-                  (.play audio))]
+                  (when play? (.play audio)))]
           (.addEventListener audio "loadedmetadata" on-meta))
-        (.play audio)))))
+        (when play? (.play audio))))))
+
+;; ── Favicon ──────────────────────────────────────────────────────────────────
+
+(defn set-favicon! [url]
+  (let [img    (js/Image.)
+        canvas (.createElement js/document "canvas")
+        size   64]
+    (set! (.-width canvas) size)
+    (set! (.-height canvas) size)
+    (set! (.-onload img)
+          (fn []
+            (let [ctx (.getContext canvas "2d")]
+              (.drawImage ctx img 0 0 size size)
+              (let [data-url (.toDataURL canvas "image/png")
+                    link     (or (.querySelector js/document "link[rel~='icon']")
+                                 (let [el (.createElement js/document "link")]
+                                   (set! (.-rel el) "icon")
+                                   (.appendChild (.-head js/document) el)
+                                   el))]
+                (set! (.-href link) data-url)))))
+    (set! (.-src img) url)))
 
 ;; ── URL / deep-link ──────────────────────────────────────────────────────────
 
@@ -123,9 +144,15 @@
 
 (defn navigate-to!
   "Switch to next-idx, animating out the current cover and in the next
-   cover simultaneously rather than sequentially."
-  [next-idx]
-  (when-let [audio @audio-el] (.pause audio))
+   cover simultaneously rather than sequentially.
+   play? overrides whether to play the new track; nil preserves current state."
+  ([next-idx] (navigate-to! next-idx nil))
+  ([next-idx play?]
+  (let [audio      @audio-el
+        was-playing (if (nil? play?)
+                      (and audio (not (.-paused audio)))
+                      play?)]
+    (when audio (.pause audio))
   (let [ex-track   (current-track)
         ex-grid-el (when ex-track (get @cover-refs (:name ex-track)))
         hero-el    @hero-ref
@@ -147,6 +174,7 @@
                :view          :hero)
         ;; After DOM re-renders with both covers present:
         (set-track-url! next-track)
+        (set-favicon! (:cover next-track))
         (r/after-render
          (fn []
            ;; Start exiting cover retreat (from hero position toward grid)
@@ -156,7 +184,7 @@
               (reset! exiting-anim {:transform exit-transform :transition true :opacity 0})))
            ;; Start entering cover FLIP simultaneously
            (enter-hero! next-idx)
-           (load-audio! next-track)))
+           (load-audio! next-track was-playing)))
         ;; Clear exiting track after animation completes
         (js/setTimeout
          (fn []
@@ -168,19 +196,20 @@
           (r/after-render
            (fn []
              (enter-hero! next-idx)
-             (load-audio! next-track)))))
-    (scroll-grid-to-track! next-idx)))
+             (load-audio! next-track was-playing)))))
+    (scroll-grid-to-track! next-idx)))))
 
 (defn select-track!
   "Enter hero view from catalog (no simultaneous exit — nothing is playing yet)."
   [index]
   (let [track (nth (:sorted @state) index)]
     (set-track-url! track)
+    (set-favicon! (:cover track))
     (swap! state assoc :current-index index :view :hero)
     (r/after-render
      (fn []
        (enter-hero! index)
-       (load-audio! track)))
+       (load-audio! track true)))
     (scroll-grid-to-track! index)))
 
 (defn retreat!
@@ -222,12 +251,12 @@
           (navigate-to! next-idx))))))
 
 (defn advance-to-next!
-  "Called when a track ends naturally."
+  "Called when a track ends naturally — always plays the next track."
   []
   (let [{:keys [current-index sorted]} @state
         next-idx (inc current-index)]
     (if (< next-idx (count sorted))
-      (navigate-to! next-idx)
+      (navigate-to! next-idx true)
       ;; Last track: just retreat to catalog
       (do (when-let [audio @audio-el] (.pause audio))
           (dismiss!)))))
@@ -386,6 +415,9 @@
                 order  (:sort-order @state)
                 sorted (sorted-tracks tracks order)]
             (swap! state assoc :tracks tracks :sorted sorted :loaded true)
+            ;; Default favicon to the first track's cover art
+            (when-let [first-track (first sorted)]
+              (set-favicon! (:cover first-track)))
             ;; Open a track from the URL hash if present
             (when-let [track-name (url-track-name)]
               (let [idx (.indexOf (mapv :name sorted) track-name)]
