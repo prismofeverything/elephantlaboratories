@@ -6,7 +6,9 @@
    [ring.util.http-response :as http-response]
    [ring.util.http-response :refer [content-type ok]]
    [selmer.parser :as parser]
-   [elephantlaboratories.config :refer [env]]))
+   [elephantlaboratories.config :refer [env]])
+  (:import
+   [java.io File FileInputStream]))
 
 (defn music-dir []
   (io/file (or (env :prism-music-dir) "music")))
@@ -68,13 +70,40 @@
                       vec))]
     (ok {:tracks (or tracks [])})))
 
+(defn serve-file-with-range
+  "Serve a file supporting HTTP Range requests (required for audio seeking/duration)."
+  [^File f content-type-str request]
+  (let [length    (.length f)
+        range-hdr (get-in request [:headers "range"])]
+    (if (and range-hdr (re-matches #"bytes=\d*-\d*" range-hdr))
+      ;; Parse range header: "bytes=START-END"
+      (let [range-val (subs range-hdr 6) ; strip "bytes="
+            [start-s end-s] (str/split range-val #"-" -1)
+            start     (if (seq start-s) (Long/parseLong start-s) 0)
+            end       (if (seq end-s) (Long/parseLong end-s) (dec length))
+            end       (min end (dec length))
+            content-len (- (inc end) start)
+            fis       (FileInputStream. f)]
+        (.skip fis start)
+        {:status  206
+         :headers {"Content-Type"   content-type-str
+                   "Content-Length"  (str content-len)
+                   "Content-Range"  (str "bytes " start "-" end "/" length)
+                   "Accept-Ranges"  "bytes"}
+         :body    fis})
+      ;; No range — full response with Accept-Ranges so browser knows it can seek
+      {:status  200
+       :headers {"Content-Type"   content-type-str
+                 "Content-Length"  (str length)
+                 "Accept-Ranges"  "bytes"}
+       :body    f})))
+
 (defn serve-track [request]
   (let [name (-> request :path-params :name)]
     (if (safe-name? name)
       (let [f (io/file (track-inner-dir name) (str name ".mp3"))]
         (if (.exists f)
-          (-> (response/file-response (.getPath f))
-              (response/content-type "audio/mpeg"))
+          (serve-file-with-range f "audio/mpeg" request)
           (http-response/not-found "Track not found")))
       (http-response/bad-request "Invalid track name"))))
 
