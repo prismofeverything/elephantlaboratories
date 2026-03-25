@@ -298,7 +298,8 @@
         {:keys [current-index sorted]} @state
         has-prev (and current-index (pos? current-index))
         has-next (and current-index (< (inc current-index) (count sorted)))]
-    [:div {:class "hero-overlay"}
+    [:div {:class "hero-overlay"
+           :on-click #(dismiss!)}
 
      [:div {:class "hero-balance"}]
 
@@ -308,11 +309,12 @@
       ;; Left nav
       [:div {:class    (str "hero-nav hero-nav--left"
                             (when-not has-prev " hero-nav--disabled"))
-             :on-click #(when has-prev (go-prev!))}
+             :on-click (fn [e] (.stopPropagation e) (when has-prev (go-prev!)))}
        [:span {:class "hero-nav-arrow"} "‹"]]
 
       ;; Cover area: exiting cover retreats while entering cover arrives
-      [:div {:class "hero-cover-area"}
+      [:div {:class "hero-cover-area"
+             :on-click (fn [e] (.stopPropagation e) (dismiss!))}
 
        ;; Exiting cover — retreats to its grid cell simultaneously with the enter
        (when ex-track
@@ -325,8 +327,7 @@
        ;; Entering cover — FLIP from grid cell to hero position; click to dismiss
        [:div {:class    "hero-main-cover"
               :ref      (fn [el] (reset! hero-ref el))
-              :style    (cover-anim-style hero-anim)
-              :on-click #(dismiss!)}
+              :style    (cover-anim-style hero-anim)}
         [:img {:class "hero-main-img"
                :src   (:cover track)
                :alt   (:display-name track)}]]]
@@ -334,11 +335,12 @@
       ;; Right nav
       [:div {:class    (str "hero-nav hero-nav--right"
                             (when-not has-next " hero-nav--disabled"))
-             :on-click #(when has-next (go-next!))}
+             :on-click (fn [e] (.stopPropagation e) (when has-next (go-next!)))}
        [:span {:class "hero-nav-arrow"} "›"]]]
 
      ;; ── Sidebar ──
-     [:div {:class "hero-sidebar"}
+     [:div {:class "hero-sidebar"
+            :on-click (fn [e] (.stopPropagation e))}
       [:div {:class "hero-info"}
        [:h1 {:class "hero-title"} (:display-name track)]
        [:p  {:class "hero-date"}  (:date track)]
