@@ -18,3 +18,4 @@ profiles.clj
 
 /figwheel_server.log
 .python-version
+__pycache__/

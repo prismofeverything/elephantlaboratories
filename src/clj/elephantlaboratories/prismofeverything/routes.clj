@@ -28,8 +28,25 @@
       :current-page "prism-home"}))
    "text/html; charset=utf-8"))
 
+(def cover-extensions
+  "Supported cover image extensions, in priority order. Each entry is
+   [extension content-type]."
+  [["png"  "image/png"]
+   ["jpg"  "image/jpeg"]
+   ["jpeg" "image/jpeg"]])
+
+(defn cover-file
+  "Find the cover image for a track by checking each supported extension.
+   Returns [file content-type] or nil."
+  [name]
+  (let [inner (track-inner-dir name)]
+    (some (fn [[ext ctype]]
+            (let [f (io/file inner (str name "." ext))]
+              (when (.exists f) [f ctype])))
+          cover-extensions)))
+
 (defn parse-description [name]
-  (let [f (io/file (track-inner-dir name) "description.txt")]
+  (let [f (io/file (track-inner-dir name) (str name ".txt"))]
     (if (.exists f)
       (let [lines       (str/split-lines (slurp f))
             date        (str/trim (or (first lines) ""))
@@ -110,11 +127,10 @@
 (defn serve-cover [request]
   (let [name (-> request :path-params :name)]
     (if (safe-name? name)
-      (let [f (io/file (track-inner-dir name) "cover.jpg")]
-        (if (.exists f)
-          (-> (response/file-response (.getPath f))
-              (response/content-type "image/jpeg"))
-          (http-response/not-found "Cover not found")))
+      (if-let [[f ctype] (cover-file name)]
+        (-> (response/file-response (.getPath f))
+            (response/content-type ctype))
+        (http-response/not-found "Cover not found"))
       (http-response/bad-request "Invalid track name"))))
 
 (defn prism-routes []

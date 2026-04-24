@@ -30,6 +30,7 @@
 (defonce track-times  (atom {}))   ; track-name → saved playback seconds
 (defonce saved-volume (atom 1.0))  ; persists across hero mount/unmount
 (defonce key-handler  (atom nil))  ; keydown listener ref for cleanup
+(defonce hash-handler (atom nil))  ; hashchange listener ref for cleanup
 
 ;; ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -399,6 +400,21 @@
          sorted)]
        [:p {:class "prism-loading"} "Loading…"])]))
 
+;; ── Hash navigation ──────────────────────────────────────────────────────────
+
+(defn open-hash-track!
+  "If the URL hash names a track, open it in hero view."
+  []
+  (when-let [track-name (url-track-name)]
+    (let [sorted (:sorted @state)
+          idx    (.indexOf (mapv :name sorted) track-name)]
+      (when (>= idx 0)
+        (if (= idx (:current-index @state))
+          nil ; already showing this track
+          (if (= :hero (:view @state))
+            (navigate-to! idx)
+            (select-track! idx)))))))
+
 ;; ── Data loading ──────────────────────────────────────────────────────────────
 
 (defn load-tracks! [& _]
@@ -421,10 +437,7 @@
             (when-let [first-track (first sorted)]
               (set-favicon! (:cover first-track)))
             ;; Open a track from the URL hash if present
-            (when-let [track-name (url-track-name)]
-              (let [idx (.indexOf (mapv :name sorted) track-name)]
-                (when (>= idx 0)
-                  (r/after-render #(select-track! idx)))))))
+            (r/after-render #(open-hash-track!))))
         :error-handler
         (fn [_] (swap! state assoc :loaded true))}))
 
@@ -478,9 +491,14 @@
 
                           nil)))]
         (reset! key-handler handler)
-        (.addEventListener js/document "keydown" handler)))
+        (.addEventListener js/document "keydown" handler))
+      (let [on-hash (fn [_] (open-hash-track!))]
+        (reset! hash-handler on-hash)
+        (.addEventListener js/window "hashchange" on-hash)))
     :component-will-unmount
     (fn [_]
+      (when-let [handler @hash-handler]
+        (.removeEventListener js/window "hashchange" handler))
       (when-let [handler @key-handler]
         (.removeEventListener js/document "keydown" handler)))
     :reagent-render
