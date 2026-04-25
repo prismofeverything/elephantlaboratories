@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Release tooling for prismofeverything.
 
 Subcommands:
@@ -17,12 +18,27 @@ Subcommands:
 
 import argparse
 import datetime
+import os
 import re
+import shlex
 import shutil
-import subprocess
 import sys
 
 from pathlib import Path
+
+
+# Bypass CPython's subprocess module — go through libc system(3) (fork+exec
+# /bin/sh), matching what a shell invocation would do. Two of these calls have
+# previously hung the system, and we suspect subprocess module behaviour
+# (posix_spawn/vfork, signal/fd inheritance) over the child commands themselves.
+def run(cmd, cwd=None):
+    quoted = ' '.join(shlex.quote(str(a)) for a in cmd)
+    if cwd is not None:
+        quoted = f'cd {shlex.quote(str(cwd))} && {quoted}'
+    print('$', ' '.join(str(a) for a in cmd), file=sys.stderr)
+    rc = os.system(quoted)
+    if rc != 0:
+        raise SystemExit(f'command failed (status={rc}): {cmd[0]}')
 
 
 # ── Track creation ───────────────────────────────────────────────────────────
@@ -58,11 +74,9 @@ def prompt_story():
 
 
 def encode_mp3(wav_path, mp3_path):
-    subprocess.run(
-        ['ffmpeg', '-y', '-i', str(wav_path),
+    run(['ffmpeg', '-y', '-i', str(wav_path),
          '-codec:a', 'libmp3lame', '-q:a', '2',
-         str(mp3_path)],
-        check=True)
+         str(mp3_path)])
 
 
 def cmd_track(args):
@@ -108,11 +122,6 @@ REMOTE_PID = f'{REMOTE_APP_DIR}/elephantlaboratories.pid'
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 LOCAL_JAR = REPO_ROOT / 'target' / 'uberjar' / 'elephantlaboratories.jar'
-
-
-def run(cmd, **kwargs):
-    print('$', ' '.join(cmd), file=sys.stderr)
-    subprocess.run(cmd, check=True, **kwargs)
 
 
 def sync_tracks():
