@@ -1,22 +1,21 @@
-"""Release a new track to ~/prismofeverything.
+"""Release tooling for prismofeverything.
 
-Usage:
-    python script/release.py <wav-path> <cover-path>
+Subcommands:
 
-Derives the track name from the WAV filename, stripping a trailing
-Bitwig timestamp of the form " YYYY-MM-DD HHMM". The script then:
+    track <wav-path> <cover-path>
+        Add a new track to ~/prismofeverything. Derives the name from the
+        WAV filename (stripping a trailing Bitwig " YYYY-MM-DD HHMM"),
+        encodes WAV→MP3 via ffmpeg, copies the cover with its real
+        extension, prompts for a story on stdin, and writes <name>.txt
+        with today's date.
 
-  - encodes the WAV to MP3 with ffmpeg
-  - copies the cover image, preserving its real extension
-  - prompts for a story on stdin (terminated by EOF / Ctrl-D)
-  - writes <name>.txt with today's date, a blank line, then the story
-
-The resulting layout is:
-    ~/prismofeverything/<name>/<name>/<name>.mp3
-    ~/prismofeverything/<name>/<name>/<name>.<png|jpg|jpeg>
-    ~/prismofeverything/<name>/<name>/<name>.txt
+    push
+        Sync ~/prismofeverything to the remote server, build an uberjar
+        from the current working tree, ship it, and restart the server
+        under nohup. Mirrors the organism deploy pattern.
 """
 
+import argparse
 import datetime
 import re
 import shutil
@@ -25,6 +24,8 @@ import sys
 
 from pathlib import Path
 
+
+# ── Track creation ───────────────────────────────────────────────────────────
 
 PRISM_DIR = Path.home() / 'prismofeverything'
 
@@ -64,9 +65,9 @@ def encode_mp3(wav_path, mp3_path):
         check=True)
 
 
-def release(wav_path, cover_path):
-    wav_path = wav_path.expanduser().resolve()
-    cover_path = cover_path.expanduser().resolve()
+def cmd_track(args):
+    wav_path = Path(args.wav).expanduser().resolve()
+    cover_path = Path(args.cover).expanduser().resolve()
 
     if not wav_path.is_file():
         raise SystemExit(f'wav not found: {wav_path}')
@@ -96,12 +97,116 @@ def release(wav_path, cover_path):
     print(f'released: {track_root}')
 
 
-def main():
-    if len(sys.argv) != 3:
-        print(__doc__, file=sys.stderr)
-        raise SystemExit(2)
+# ── Push to remote server ────────────────────────────────────────────────────
 
-    release(Path(sys.argv[1]), Path(sys.argv[2]))
+REMOTE_HOST = 'ryan@elephantlaboratories.com'
+REMOTE_APP_DIR = '~/elephantlaboratories'
+REMOTE_TRACKS_DIR = '/home/ryan/prismofeverything'
+REMOTE_JAR = f'{REMOTE_APP_DIR}/elephantlaboratories.jar'
+REMOTE_LOG = f'{REMOTE_APP_DIR}/elephantlaboratories.log'
+REMOTE_PID = f'{REMOTE_APP_DIR}/elephantlaboratories.pid'
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+LOCAL_JAR = REPO_ROOT / 'target' / 'uberjar' / 'elephantlaboratories.jar'
+
+
+def run(cmd, **kwargs):
+    print('$', ' '.join(cmd), file=sys.stderr)
+    subprocess.run(cmd, check=True, **kwargs)
+
+
+def sync_tracks():
+    print('=== Syncing tracks to remote ===', file=sys.stderr)
+    src = str(PRISM_DIR) + '/'
+    dst = f'{REMOTE_HOST}:{REMOTE_TRACKS_DIR}/'
+    run(['rsync', '-avz', src, dst])
+
+
+def build_jar():
+    print('=== Building uberjar ===', file=sys.stderr)
+    run(['lein', 'uberjar'], cwd=str(REPO_ROOT))
+    if not LOCAL_JAR.is_file():
+        raise SystemExit(f'expected jar not produced: {LOCAL_JAR}')
+    size_mb = LOCAL_JAR.stat().st_size / (1024 * 1024)
+    print(f'built: {LOCAL_JAR} ({size_mb:.1f} MB)', file=sys.stderr)
+
+
+def ship_jar():
+    print('=== Uploading jar to remote ===', file=sys.stderr)
+    run(['ssh', REMOTE_HOST, f'mkdir -p {REMOTE_APP_DIR}'])
+    run(['scp', str(LOCAL_JAR), f'{REMOTE_HOST}:{REMOTE_JAR}'])
+
+
+def restart_server():
+    print('=== Restarting server ===', file=sys.stderr)
+    # Mirror organism's pattern: kill the old PID if running, then nohup the new jar.
+    remote_script = f'''
+set -e
+cd {REMOTE_APP_DIR}
+if [ -f elephantlaboratories.pid ]; then
+  kill $(cat elephantlaboratories.pid) 2>/dev/null || true
+  rm -f elephantlaboratories.pid
+  sleep 2
+fi
+nohup java -Dclojure.main.report=stderr \\
+  -cp elephantlaboratories.jar clojure.main \\
+  -m elephantlaboratories.core \\
+  > elephantlaboratories.log 2>&1 &
+echo $! > elephantlaboratories.pid
+sleep 3
+if kill -0 $(cat elephantlaboratories.pid) 2>/dev/null; then
+  echo "Server started (pid $(cat elephantlaboratories.pid))"
+else
+  echo "ERROR: server failed to start. Last log lines:"
+  tail -30 elephantlaboratories.log
+  exit 1
+fi
+'''
+    run(['ssh', REMOTE_HOST, f'bash -lc {shell_quote(remote_script)}'])
+
+
+def shell_quote(s):
+    # Single-quote for bash, escaping any embedded single quotes.
+    return "'" + s.replace("'", "'\\''") + "'"
+
+
+def cmd_push(args):
+    if args.skip_sync:
+        print('(skipping track sync)', file=sys.stderr)
+    else:
+        sync_tracks()
+
+    if args.skip_build:
+        if not LOCAL_JAR.is_file():
+            raise SystemExit(f'--skip-build given but jar not found at {LOCAL_JAR}')
+        print('(skipping build)', file=sys.stderr)
+    else:
+        build_jar()
+
+    ship_jar()
+    restart_server()
+
+
+# ── CLI ──────────────────────────────────────────────────────────────────────
+
+def main():
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    sub = parser.add_subparsers(dest='cmd', required=True)
+
+    p_track = sub.add_parser('track', help='create a new track locally')
+    p_track.add_argument('wav', help='path to source WAV')
+    p_track.add_argument('cover', help='path to cover image (png/jpg/jpeg)')
+    p_track.set_defaults(func=cmd_track)
+
+    p_push = sub.add_parser('push', help='sync tracks, build jar, deploy')
+    p_push.add_argument('--skip-sync', action='store_true', help='skip track rsync')
+    p_push.add_argument('--skip-build', action='store_true', help='skip lein uberjar (use existing jar)')
+    p_push.set_defaults(func=cmd_push)
+
+    args = parser.parse_args()
+    args.func(args)
 
 
 if __name__ == '__main__':
