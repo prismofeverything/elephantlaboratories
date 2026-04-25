@@ -10,10 +10,15 @@ Subcommands:
         extension, prompts for a story on stdin, and writes <name>.txt
         with today's date.
 
-    push
-        Sync ~/prismofeverything to the remote server, build an uberjar
-        from the current working tree, ship it, and restart the server
-        under nohup. Mirrors the organism deploy pattern.
+    sync
+        rsync ~/prismofeverything to the remote server. The running server
+        rescans the tracks dir on every /api/tracks request, so new tracks
+        appear without a restart.
+
+    build
+        Build an uberjar from the current working tree, scp it to the
+        remote, and restart the server under nohup. Mirrors the organism
+        deploy pattern.
 """
 
 import argparse
@@ -179,19 +184,12 @@ def shell_quote(s):
     return "'" + s.replace("'", "'\\''") + "'"
 
 
-def cmd_push(args):
-    if args.skip_sync:
-        print('(skipping track sync)', file=sys.stderr)
-    else:
-        sync_tracks()
+def cmd_sync(args):
+    sync_tracks()
 
-    if args.skip_build:
-        if not LOCAL_JAR.is_file():
-            raise SystemExit(f'--skip-build given but jar not found at {LOCAL_JAR}')
-        print('(skipping build)', file=sys.stderr)
-    else:
-        build_jar()
 
+def cmd_build(args):
+    build_jar()
     ship_jar()
     restart_server()
 
@@ -209,10 +207,11 @@ def main():
     p_track.add_argument('cover', help='path to cover image (png/jpg/jpeg)')
     p_track.set_defaults(func=cmd_track)
 
-    p_push = sub.add_parser('push', help='sync tracks, build jar, deploy')
-    p_push.add_argument('--skip-sync', action='store_true', help='skip track rsync')
-    p_push.add_argument('--skip-build', action='store_true', help='skip lein uberjar (use existing jar)')
-    p_push.set_defaults(func=cmd_push)
+    p_sync = sub.add_parser('sync', help='rsync tracks to remote (no restart needed)')
+    p_sync.set_defaults(func=cmd_sync)
+
+    p_build = sub.add_parser('build', help='build uberjar, ship it, restart server')
+    p_build.set_defaults(func=cmd_build)
 
     args = parser.parse_args()
     args.func(args)
