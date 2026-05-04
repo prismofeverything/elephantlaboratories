@@ -19,6 +19,13 @@ Subcommands:
         Build an uberjar from the current working tree, scp it to the
         remote, and restart the server under nohup. Mirrors the organism
         deploy pattern.
+
+    ship
+        Upload the already-built local jar and restart the server. Use
+        this to retry after a broken-pipe scp without rebuilding.
+
+    restart
+        Restart the remote server using the jar already on the remote.
 """
 
 import argparse
@@ -147,6 +154,8 @@ def build_jar():
 
 def ship_jar():
     print('=== Uploading jar to remote ===', file=sys.stderr)
+    if not LOCAL_JAR.is_file():
+        raise SystemExit(f'no local jar to ship: {LOCAL_JAR} (run `release.py build` first)')
     run(['ssh', REMOTE_HOST, f'mkdir -p {REMOTE_APP_DIR}'])
     run(['scp', str(LOCAL_JAR), f'{REMOTE_HOST}:{REMOTE_JAR}'])
 
@@ -194,6 +203,15 @@ def cmd_build(args):
     restart_server()
 
 
+def cmd_ship(args):
+    ship_jar()
+    restart_server()
+
+
+def cmd_restart(args):
+    restart_server()
+
+
 # ── CLI ──────────────────────────────────────────────────────────────────────
 
 def main():
@@ -212,6 +230,12 @@ def main():
 
     p_build = sub.add_parser('build', help='build uberjar, ship it, restart server')
     p_build.set_defaults(func=cmd_build)
+
+    p_ship = sub.add_parser('ship', help='upload existing local jar and restart server')
+    p_ship.set_defaults(func=cmd_ship)
+
+    p_restart = sub.add_parser('restart', help='restart the remote server')
+    p_restart.set_defaults(func=cmd_restart)
 
     args = parser.parse_args()
     args.func(args)
