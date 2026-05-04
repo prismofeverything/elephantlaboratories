@@ -173,9 +173,11 @@
                :exiting-track ex-track
                :current-index next-idx
                :view          :hero)
-        ;; After DOM re-renders with both covers present:
         (set-track-url! next-track)
         (set-favicon! (:cover next-track))
+        ;; Load audio synchronously — must not depend on rAF/render cycle, which
+        ;; browsers pause in hidden tabs (would block auto-advance on track end).
+        (load-audio! next-track was-playing)
         (r/after-render
          (fn []
            ;; Start exiting cover retreat (from hero position toward grid)
@@ -184,8 +186,7 @@
             (fn []
               (reset! exiting-anim {:transform exit-transform :transition true :opacity 0})))
            ;; Start entering cover FLIP simultaneously
-           (enter-hero! next-idx)
-           (load-audio! next-track was-playing)))
+           (enter-hero! next-idx)))
         ;; Clear exiting track after animation completes
         (js/setTimeout
          (fn []
@@ -194,10 +195,10 @@
          540))
       ;; No exit animation possible — just enter the new track
       (do (swap! state assoc :current-index next-idx :view :hero)
-          (r/after-render
-           (fn []
-             (enter-hero! next-idx)
-             (load-audio! next-track was-playing)))))
+          (set-track-url! next-track)
+          (set-favicon! (:cover next-track))
+          (load-audio! next-track was-playing)
+          (r/after-render #(enter-hero! next-idx))))
     (scroll-grid-to-track! next-idx)))))
 
 (defn select-track!
