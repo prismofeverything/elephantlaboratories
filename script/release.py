@@ -17,8 +17,8 @@ Subcommands:
 
     build
         Build an uberjar from the current working tree, scp it to the
-        remote, and restart the server under nohup. Mirrors the organism
-        deploy pattern.
+        remote, and restart the systemd service. Deploy target comes from
+        $DEPLOY_HOST (default: the .com, correct after DNS cutover).
 
     ship
         Upload the already-built local jar and restart the server. Use
@@ -125,12 +125,13 @@ def cmd_track(args):
 
 # ── Push to remote server ────────────────────────────────────────────────────
 
-REMOTE_HOST = 'ryan@elephantlaboratories.com'
+# Deploy target. Defaults to the domain (correct once DNS points at the new box);
+# override for the pre-cutover droplet:  DEPLOY_HOST=ryan@NEW_IP ./release.py build
+REMOTE_HOST = os.environ.get('DEPLOY_HOST', 'ryan@elephantlaboratories.com')
+SERVICE = 'elephantlaboratories'   # systemd unit: el.com :21112 + prism.com :21113
 REMOTE_APP_DIR = '~/elephantlaboratories'
 REMOTE_TRACKS_DIR = '/home/ryan/prismofeverything'
 REMOTE_JAR = f'{REMOTE_APP_DIR}/elephantlaboratories.jar'
-REMOTE_LOG = f'{REMOTE_APP_DIR}/elephantlaboratories.log'
-REMOTE_PID = f'{REMOTE_APP_DIR}/elephantlaboratories.pid'
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 LOCAL_JAR = REPO_ROOT / 'target' / 'uberjar' / 'elephantlaboratories.jar'
@@ -161,27 +162,18 @@ def ship_jar():
 
 
 def restart_server():
-    print('=== Restarting server ===', file=sys.stderr)
-    # Mirror organism's pattern: kill the old PID if running, then nohup the new jar.
+    print(f'=== Restarting {SERVICE} via systemd ===', file=sys.stderr)
+    # systemd owns the process now (unit installed by the migration's 02 script);
+    # NOPASSWD sudoers (also from 02) lets this restart run non-interactively.
     remote_script = f'''
 set -e
-cd {REMOTE_APP_DIR}
-if [ -f elephantlaboratories.pid ]; then
-  kill $(cat elephantlaboratories.pid) 2>/dev/null || true
-  rm -f elephantlaboratories.pid
-  sleep 2
-fi
-nohup java -Dclojure.main.report=stderr \\
-  -cp elephantlaboratories.jar clojure.main \\
-  -m elephantlaboratories.core \\
-  > elephantlaboratories.log 2>&1 &
-echo $! > elephantlaboratories.pid
-sleep 3
-if kill -0 $(cat elephantlaboratories.pid) 2>/dev/null; then
-  echo "Server started (pid $(cat elephantlaboratories.pid))"
+sudo systemctl restart {SERVICE}
+sleep 2
+if systemctl is-active --quiet {SERVICE}; then
+  echo "{SERVICE} is active (elephantlaboratories.com :21112, prismofeverything.com :21113)"
 else
-  echo "ERROR: server failed to start. Last log lines:"
-  tail -30 elephantlaboratories.log
+  echo "ERROR: {SERVICE} failed to start — recent logs:"
+  journalctl -u {SERVICE} -n 30 --no-pager
   exit 1
 fi
 '''
