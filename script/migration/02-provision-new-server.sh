@@ -7,7 +7,7 @@
 #     sudo bash 02-provision-new-server.sh
 #
 # Installs the whole stack (nginx, OpenJDK 17, MongoDB 8.0, ffmpeg, certbot,
-# git, ufw), creates swap, the ryan/git users, app dirs, systemd units, the
+# git, ufw), creates swap, the prism/git users, app dirs, systemd units, the
 # nginx site configs, and the firewall. Idempotent — safe to re-run.
 #
 # It leaves nginx serving a plain HTTP holding page. The real TLS vhosts are
@@ -17,7 +17,7 @@
 set -euo pipefail
 
 # ── config — edit if your names differ ───────────────────────────────────────
-APP_USER=ryan
+APP_USER=prism          # the app user this script CREATES (fresh box has only root)
 JAVA_PKG=openjdk-17-jre-headless
 MONGO_MAJOR=8.0
 SWAP_GB=2
@@ -64,8 +64,12 @@ fi
 msg "creating users: $APP_USER, git"
 if ! id "$APP_USER" >/dev/null 2>&1; then
   adduser --disabled-password --gecos "" "$APP_USER"
-  usermod -aG sudo "$APP_USER"
 fi
+# prism is deliberately NOT a sudoer: it's the identity the automated deploy
+# (release.py over SSH) logs in as, so its key must not be root-equivalent. Its
+# only root power is the scoped NOPASSWD systemctl-restart rule written to
+# /etc/sudoers.d/deploy below. Do admin as root. Enforce this on re-runs too:
+gpasswd -d "$APP_USER" sudo 2>/dev/null || true
 # keep your SSH access: copy root's authorized_keys to the app user if present
 if [ -f /root/.ssh/authorized_keys ]; then
   install -d -m700 -o "$APP_USER" -g "$APP_USER" "/home/$APP_USER/.ssh"
@@ -297,23 +301,23 @@ ufw allow 443/tcp
 ufw --force enable
 systemctl enable --now fail2ban
 
+THIS_IP="$(hostname -I 2>/dev/null | awk '{print $1}')"
 cat <<EOF
 
 ============================================================================
-  Provisioned. Stack: nginx + OpenJDK 17 + MongoDB 8.0 + certbot + git + ufw
+  Provisioned: nginx + OpenJDK 17 + MongoDB 8.0 + certbot + git + ufw + swap
+  nginx is serving the holding page; the TLS vhosts are written but not yet
+  enabled — 03-restore-data.sh enables them once the certs are restored.
 ============================================================================
-Next:
-  1) rsync your laptop's ~/elabs-migration bundle up to this box, e.g.:
-        rsync -avz ~/elabs-migration/  $APP_USER@THIS_IP:~/elabs-migration/
-  2) sudo bash 03-restore-data.sh ~/elabs-migration     # restores mongo/tracks/git/certs, enables TLS sites
-  3) deploy the jars from your laptop:
-        # elephantlaboratories repo:  lein uberjar
-        scp target/uberjar/elephantlaboratories.jar $APP_USER@THIS_IP:~/elephantlaboratories/
-        # organism repo:              ./deploy.sh build   (or scp organism.jar + *.json)
-        scp target/uberjar/organism.jar organism/game_library.json organism/lineage.json $APP_USER@THIS_IP:~/organism/
-        ssh $APP_USER@THIS_IP 'sudo systemctl restart elephantlaboratories organism'
-  4) verify before DNS flip (certs are the restored ones, valid already):
-        curl --resolve elephantlaboratories.com:443:THIS_IP https://elephantlaboratories.com -I
-  5) flip DNS A records to THIS_IP, then:  sudo certbot renew --dry-run
+NEXT (each step is a script — nothing to hand-type):
+  1) On your laptop, push the pulled bundle up to this box (as root):
+         NEW=root@${THIS_IP:-THIS_IP} script/migration/push-to-new-server.sh
+  2) On this box (you're already root here), restore data + enable TLS vhosts:
+         bash ~/03-restore-data.sh ~/elabs-migration
+  3) On your laptop, deploy the apps as '${APP_USER}' and verify before DNS flip:
+         NEW=${APP_USER}@${THIS_IP:-THIS_IP} script/migration/deploy-and-verify.sh
+
+  Transfers + restore run as root; '${APP_USER}' has no general sudo — it only
+  restarts its own services for the deploy. Its home holds the app jar + tracks.
 ============================================================================
 EOF

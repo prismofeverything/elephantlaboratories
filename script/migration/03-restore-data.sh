@@ -7,7 +7,7 @@
 #
 #     sudo bash 03-restore-data.sh [~/elabs-migration]
 #
-# Expects the layout produced by 01 + the rsync commands it printed:
+# Expects the layout produced by 01 -> pull-to-laptop.sh -> push-to-new-server.sh:
 #     <root>/bundle/   = contents of the old server's ~/migrate-out
 #     <root>/media/    = prismofeverything/, music/, ryanspangler/, static sites
 #
@@ -21,7 +21,7 @@ set -euo pipefail
 ROOT="${1:-$HOME/elabs-migration}"
 BUNDLE="$ROOT/bundle"
 MEDIA="$ROOT/media"
-APP_USER=ryan
+APP_USER=prism          # must match APP_USER in 02-provision-new-server.sh
 msg()  { echo -e "\n\033[1;32m==>\033[0m $*"; }
 warn() { echo -e "\033[1;33m[!]\033[0m $*" >&2; }
 [ -d "$BUNDLE" ] || { echo "no bundle at $BUNDLE — rsync it up first"; exit 1; }
@@ -61,7 +61,6 @@ restore_dir music             "/home/$APP_USER/music"
 restore_dir ryanspangler      "/home/$APP_USER/ryanspangler"
 restore_dir metamagicreality  "/home/$APP_USER/metamagicreality"
 restore_dir repressilator     "/home/$APP_USER/repressilator"
-restore_dir lisamarahrens     "/home/$APP_USER/lisamarahrens"
 
 # ── 3. self-hosted git bare repos + git user's keys ──────────────────────────
 msg "restoring /srv/git"
@@ -119,7 +118,7 @@ enable_tls elephantlaboratories.com elephantlaboratories.com
 enable_tls prismofeverything.com    prismofeverything.com
 enable_tls playorganism.io          playorganism.io
 # static HTTP-only sites: enable only if their content was restored
-for name in ryanspangler.com metamagicreality.com repressilator.com lisamarahrens.com; do
+for name in ryanspangler.com metamagicreality.com repressilator.com; do
   dir="${name%%.*}"
   if [ -n "$(ls -A "/home/$APP_USER/$dir" 2>/dev/null)" ]; then
     ln -sf "/etc/nginx/sites-available/$name" "/etc/nginx/sites-enabled/$name"
@@ -129,24 +128,22 @@ done
 
 nginx -t && systemctl reload nginx
 
+THIS_IP="$(hostname -I 2>/dev/null | awk '{print $1}')"
 cat <<EOF
 
 ============================================================================
-  Data restored. Now deploy the jars, then verify before flipping DNS.
+  Data restored (mongo, tracks, /srv/git, secrets, TLS certs); TLS vhosts
+  enabled for every domain whose cert is present.
 ============================================================================
-  From your laptop:
-    # elephantlaboratories repo:
-    lein uberjar && scp target/uberjar/elephantlaboratories.jar $APP_USER@THIS_IP:~/elephantlaboratories/
-    # organism repo:
-    ./deploy.sh build   # (or) scp target/uberjar/organism.jar organism/{game_library,lineage}.json $APP_USER@THIS_IP:~/organism/
-    ssh $APP_USER@THIS_IP 'sudo systemctl restart elephantlaboratories organism'
+NEXT — from your laptop, deploy the apps and verify before flipping DNS:
 
-  Verify (bypassing DNS):
-    curl --resolve elephantlaboratories.com:443:THIS_IP https://elephantlaboratories.com -I
-    curl --resolve prismofeverything.com:443:THIS_IP    https://prismofeverything.com/api/tracks
-    curl --resolve playorganism.io:443:THIS_IP          https://playorganism.io -I
+    NEW=${APP_USER}@${THIS_IP:-THIS_IP} script/migration/deploy-and-verify.sh
 
-  Then flip DNS A-records to THIS_IP and, once propagated:
-    sudo certbot renew --dry-run     # confirm renewals work going forward
+That builds + ships the jars (via release.py) and curl-checks all three sites
+with --resolve, so you confirm they serve correctly while DNS still points at
+the old box. When every check is green, flip the A-records to ${THIS_IP:-THIS_IP},
+then re-verify against real DNS:
+
+    NEW=${THIS_IP:-THIS_IP} script/migration/deploy-and-verify.sh --verify-only
 ============================================================================
 EOF

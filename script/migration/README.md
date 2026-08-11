@@ -161,44 +161,60 @@ Changes vs. today, all improvements:
   *yours* is nearly free (static files + one nginx block each); `lisamarahrens.com` is
   someone else's — carry only if you still host for them.
 
-The pull script (below) copies **all** the "carry" items and rsyncs the static sites too, so
-nothing is lost; you choose at provision time which nginx blocks to actually enable.
+The pull step (`01-pull-from-old-server.sh` + `pull-to-laptop.sh`) copies **all** the "carry"
+items and rsyncs the static sites too, so nothing is lost; you choose at provision time which
+nginx blocks to actually enable.
 
 ---
 
 ## 6. Runbook
 
-Three scripts in this directory. Read each before running; they're commented.
+Six scripts in this directory, run in order. Each runs on a specific machine and ends by
+naming the next one — **none of them dump commands for you to copy-paste and run.** Read each
+before running; they're commented. The three server-side steps are numbered (`01`/`02`/`03`);
+the three laptop-side "bridge" steps that move data between machines are verb-named.
 
-1. **`01-pull-from-old-server.sh`** — run **on the old server** (`sudo`). Dumps Mongo,
-   Postgres (`zyuu`, for cold storage), copies certs + secrets + `/srv/git`, and stages
-   everything under `~/migrate-out/`. Prints the exact `rsync` commands to pull the bundle
-   **and** the big media dirs down to your laptop. Read-only w.r.t. the running services.
+| # | Script | Run on | Does |
+|---|---|---|---|
+| 1 | `01-pull-from-old-server.sh` | **old server** (`sudo`) | dumps Mongo + Postgres(`zyuu`), copies certs / secrets / `/srv/git`, stages `~/migrate-out/`. Read-only w.r.t. running services. |
+| 2 | `pull-to-laptop.sh` | **laptop** | rsyncs the bundle **and** the big media dirs down to `~/elabs-migration`. Idempotent — re-run to catch late track additions. |
+| 3 | `02-provision-new-server.sh` | **new box** (as root) | nginx + OpenJDK 17 + MongoDB 8.0 + ffmpeg + certbot + git + ufw, swap, creates the `prism`/`git` users (copies root's SSH key to `prism`), dirs, **systemd units**, nginx vhosts, firewall. Idempotent. |
+| 4 | `push-to-new-server.sh` | **laptop** | rsyncs `~/elabs-migration` up to the new box. Idempotent. |
+| 5 | `03-restore-data.sh [dir]` | **new box** (as root) | restores Mongo, tracks, `/srv/git`, secrets, `/etc/letsencrypt` into `/home/prism`; enables each TLS vhost whose cert is present. Idempotent. |
+| 6 | `deploy-and-verify.sh` | **laptop** | builds + ships the jars (elephantlaboratories/prism via `release.py`; organism via `ORGANISM_REPO=… ./deploy.sh`) and curl-verifies all three sites over TLS with `--resolve`, before any DNS change. |
 
-2. Provision the new droplet (Ubuntu 24.04), then **`02-provision-new-server.sh`** — run
-   **on the new server** (`sudo`). Installs nginx + OpenJDK 17 + MongoDB 8.0 + ffmpeg +
-   certbot + git + ufw, creates swap, the `ryan`/`git` users, dirs, **systemd units**, the
-   nginx site configs, and firewall rules. Idempotent.
+Host is passed by env var, so nothing is pinned to a machine:
+- `OLD=ryan@<old-ip-or-.com>` for step 2 (defaults to `ryan@elephantlaboratories.com` — still
+  the old box, user `ryan`, pre-cutover). `DRY_RUN=1` previews; `SKIP_PERIPHERALS=1` pulls only
+  the critical dirs.
+- The new box starts with only `root`; `02` creates the app user **`prism`** (which has no sudo
+  password by design). So run `02`/`03` and the **push as root**, and the app **deploy as `prism`**:
+  `NEW=root@tetrahedron.world` for the push (step 4), `NEW=prism@tetrahedron.world` for
+  deploy-and-verify (step 6). Because `02` copies root's `authorized_keys` to `prism`, `prism@…`
+  works the moment provisioning finishes.
 
-3. **`03-restore-data.sh`** — run **on the new server** (`sudo`) after you've rsynced the
-   bundle up. Restores Mongo, the track library, `/srv/git`, and `/etc/letsencrypt`.
+`02` installs a scoped `/etc/sudoers.d/deploy` and adds `prism` to `systemd-journal`, so
+`release.py` / `deploy.sh` can `systemctl restart` and read journals over SSH with no password.
+organism's `game_library.json` / `lineage.json` land once via `03`; re-scp them only if you
+change the seed data.
 
-4. **Deploy the apps** from your laptop. Both deploy scripts now restart via **systemd** and
-   read the target from `$DEPLOY_HOST` (default: the `.com`, correct post-cutover). Pre-cutover,
-   point them at the new droplet's IP:
-   - elephantlaboratories repo: `DEPLOY_HOST=ryan@NEW_IP python3 script/release.py build`
-   - organism repo:             `DEPLOY_HOST=ryan@NEW_IP ./deploy.sh ship`
+7. **Cutover** — the one genuinely manual step, because it happens at your DNS registrar, not
+   on a box we control. Run `deploy-and-verify.sh` until every check is green (it tests each
+   site via `--resolve` while DNS still points at the old box), then change **only these
+   A-records** from the old IP (`138.197.213.77`) to the new one: `elephantlaboratories.com`,
+   `www.elephantlaboratories.com`, `prismofeverything.com`, `www.prismofeverything.com`,
+   `playorganism.io`, `www.playorganism.io`, and any static sites you kept. Re-check with
+   `deploy-and-verify.sh --verify-only`.
 
-   (`02` installs a scoped `/etc/sudoers.d/deploy` + adds `ryan` to `systemd-journal`, so these
-   `systemctl restart`s and `deploy.sh log/status/tail` work over SSH with no password. The one
-   thing `deploy.sh` still won't ship is organism's `game_library.json` / `lineage.json` — those
-   land once via `03`; re-scp them only if you change the seed data.)
+   ⚠️ **Do NOT touch `shop.elephantlaboratories.com`** — it's a `CNAME` to `shops.myshopify.com`
+   (the Shopify store, hosted by Shopify, not the droplet). It is *not* an A-record and is *not*
+   in the list above; changing the apex A-record does not affect this independent subdomain.
+   Likewise leave `MX` / `TXT` (SPF, DKIM, domain-verification) / `CAA` records alone — the IP
+   flip concerns only the A-records above, so Shopify's store, Buy links, and order email are
+   untouched.
 
-5. **Cutover:** test with `curl --resolve elephantlaboratories.com:443:NEW_IP https://…`
-   (or a laptop `/etc/hosts` entry) while DNS still points at the old box. When green, change
-   the A records (elephantlaboratories.com, www, prismofeverything.com, playorganism.io, and
-   any static sites you kept) to the new IP. Watch both boxes. After 48 h of clean logs and a
-   successful `certbot renew --dry-run`, snapshot and destroy the old droplet.
+   After 48 h of clean logs and a successful `certbot renew --dry-run`, snapshot and destroy the
+   old droplet.
 
 ## 7. Risks / watch-items
 - **Mongo 3.6 → 8.0 is a 5-major jump.** `mongodump`/`mongorestore` of plain BSON documents

@@ -8,13 +8,13 @@
 #
 # It stages everything that ISN'T in git and can't be rebuilt — Mongo dump,
 # TLS certs, app secrets, the git bare repos, static-site data — under
-# ~/migrate-out/, then prints the exact rsync commands to pull that bundle
+# ~/migrate-out/, then points you at pull-to-laptop.sh, which pulls that bundle
 # (and the big media dirs) down to your laptop.
 #
 # It does NOT stop or modify any running service. Mongo is dumped hot, which is
 # fine for this data. The big media dirs (tracks, music) are intentionally NOT
-# copied into the bundle (to avoid filling this 54%-full disk) — they're rsynced
-# straight from their source paths by the commands printed at the end.
+# copied into the bundle (to avoid filling this 54%-full disk) — pull-to-laptop.sh
+# rsyncs them straight from their source paths.
 #
 set -u
 
@@ -23,6 +23,27 @@ OWNER="${SUDO_USER:-$(id -un)}"
 OWNER_HOME="$(getent passwd "$OWNER" | cut -d: -f6)"
 OWNER_HOME="${OWNER_HOME:-/home/ryan}"
 STAGE="$OWNER_HOME/migrate-out"
+
+# ── guard: this MUST run ON THE OLD SERVER ───────────────────────────────────
+# 01 stages the LIVE databases, TLS certs, /srv/git and secrets — which only
+# exist on the old production box. Run it anywhere else (e.g. your laptop, which
+# may have its own local MongoDB) and you'd stage a wrong/empty bundle that looks
+# fine until pull-to-laptop.sh fails. Refuse unless this looks like the old box.
+_looks_like_old_server() {
+  case "$(hostname 2>/dev/null)" in *elephant*) return 0 ;; esac
+  [ -d /srv/git ] || [ -d /etc/letsencrypt/live ]
+}
+if ! _looks_like_old_server; then
+  {
+    echo "[!] This does not look like the OLD production server:"
+    echo "      hostname='$(hostname 2>/dev/null)', no /srv/git, no /etc/letsencrypt/live."
+    echo "[!] 01 stages the live databases/certs/secrets, which live only there."
+    echo "[!] Run it ON THE OLD SERVER, e.g. from your laptop:"
+    echo "      ssh -t ryan@elephantlaboratories.com 'sudo bash ~/01-pull-from-old-server.sh'"
+    echo "[!] (set FORCE=1 to override if you really mean to run it here.)"
+  } >&2
+  [ -n "${FORCE:-}" ] || exit 1
+fi
 
 echo "==> staging bundle under: $STAGE"
 mkdir -p "$STAGE"/{mongodump,postgres,etc-letsencrypt,nginx,srv-git,secrets,meta}
@@ -122,49 +143,33 @@ ps auxww | grep -iE 'java|mongo|nginx|postgres' | grep -v grep > "$STAGE/meta/ru
 # ── ownership + summary ──────────────────────────────────────────────────────
 chown -R "$OWNER":"$OWNER" "$STAGE" 2>/dev/null || true
 BUNDLE_SIZE="$(du -sh "$STAGE" 2>/dev/null | cut -f1)"
+OLD_IP="$(hostname -I 2>/dev/null | awk '{print $1}')"
 
 cat <<EOF
 
 ============================================================================
   Bundle staged at: $STAGE   (total $BUNDLE_SIZE)
 ============================================================================
-
 Contents:
   mongodump/         full MongoDB dump (all sites' data)      <-- critical
   postgres/          zyuu.sql.gz (archival only)
   etc-letsencrypt/   TLS certs + account + renewal configs    <-- critical
   srv-git/           bare git repos (tetrahedron, prism, ...)
   secrets/           .keys, ssh authorized_keys, app config, git-user ssh
-  nginx/, meta/       reference copies + records
+  nginx/, meta/      reference copies + records
 
-NOTE — NOT in this bundle (rebuilt from git, or copied separately below):
-  * both uberjars           -> rebuilt on your laptop (lein uberjar / deploy.sh)
-  * ~/.m2 ~/.nvm node_modules target/  -> regenerated
-  * the big media dirs      -> rsynced straight from source, see below
+NOT in this bundle (rebuilt from git, or pulled straight from source next):
+  * both uberjars                       -> rebuilt by release.py / deploy.sh
+  * ~/.m2 ~/.nvm node_modules target/   -> regenerated
+  * the big media dirs (tracks, music, static sites) -> pulled by the next script
 
 ----------------------------------------------------------------------------
-NEXT — run these FROM YOUR LAPTOP to pull everything down:
-----------------------------------------------------------------------------
+NEXT — from your laptop, in the elephantlaboratories repo, run:
 
-OLD=${OWNER}@$(hostname -I 2>/dev/null | awk '{print $1}')     # or ${OWNER}@elephantlaboratories.com
-DEST=~/elabs-migration                                          # laptop staging dir
-mkdir -p "\$DEST"
+    OLD=${OWNER}@${OLD_IP:-elephantlaboratories.com} script/migration/pull-to-laptop.sh
 
-# 1) the config/secrets/db bundle
-rsync -avz "\$OLD:$STAGE/" "\$DEST/bundle/"
-
-# 2) the prismofeverything track library (2.7 GB) — SOURCE OF TRUTH, critical
-rsync -avz "\$OLD:/home/${OWNER}/prismofeverything/" "\$DEST/media/prismofeverything/"
-
-# 3) ryanspangler.com + its music archive (only if you're keeping that site)
-rsync -avz "\$OLD:/home/${OWNER}/music/"         "\$DEST/media/music/"
-rsync -avz "\$OLD:/home/${OWNER}/ryanspangler/"  "\$DEST/media/ryanspangler/"
-
-# 4) the small HTTP-only static sites (keep whichever are yours)
-rsync -avz "\$OLD:/home/${OWNER}/metamagicreality/" "\$DEST/media/metamagicreality/"
-rsync -avz "\$OLD:/home/${OWNER}/repressilator/"    "\$DEST/media/repressilator/"
-rsync -avz "\$OLD:/home/${OWNER}/lisamarahrens/"    "\$DEST/media/lisamarahrens/"
-
-Then push \$DEST up to the NEW server after you've run 02-provision-new-server.sh.
+That pulls this bundle AND the media dirs down to ~/elabs-migration. It is
+idempotent — safe to re-run right up until cutover. (The rsync commands that
+used to print here now live in that script, so there's nothing to copy-paste.)
 ============================================================================
 EOF

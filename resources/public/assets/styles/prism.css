@@ -378,14 +378,137 @@ body {
   padding-top: 0.5rem;
 }
 
+/* The <audio> element is the engine only — the .player controls drive it. */
 .hero-audio audio {
-  width: 100%;
-  height: 32px;
-  accent-color: #a855f7;
+  display: none;
 }
 
-.hero-audio audio::-webkit-media-controls-panel {
-  background: #100c1c;
+/* ── Custom transport (robust at any width) ────────── */
+.player {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+/* Scrubber row: current | seek | duration */
+.player-scrub {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.player-time {
+  font-size: 0.7rem;
+  color: #7055a0;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  min-width: 2.6em;
+}
+
+.player-time--end {
+  text-align: right;
+}
+
+/* Buttons row: play on the left, volume pushed to the right */
+.player-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.player-vol {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;   /* keep volume anchored to the right edge */
+  min-width: 0;
+}
+
+.player-btn {
+  background: transparent;
+  border: 1px solid #2e1f4a;
+  color: #b090e0;
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: 'Raleway', sans-serif;
+  line-height: 1;
+  transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.player-btn:hover {
+  border-color: #6644aa;
+  color: #c084fc;
+}
+
+.player-play {
+  width: 46px;
+  height: 32px;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.player-mute {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 0.95rem;
+  border-color: transparent;
+  flex-shrink: 0;
+}
+
+.player-mute:hover {
+  border-color: transparent;
+}
+
+/* Range inputs — same visual language as .col-slider */
+.player-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 3px;
+  background: #2e1f4a;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Scrubber takes all remaining width and never collapses */
+.player-seek {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Volume shrinks on small screens but stays present + grabbable */
+.player-volume {
+  width: 96px;
+  max-width: 45vw;
+  min-width: 48px;
+  flex-shrink: 1;
+}
+
+.player-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #a855f7;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.5);
+  transition: box-shadow 0.2s;
+}
+
+.player-range::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.85);
+}
+
+.player-range::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border: none;
+  border-radius: 50%;
+  background: #a855f7;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.5);
 }
 
 /* ── Medium screens — sidebar below cover ─────────── */

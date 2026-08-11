@@ -126,11 +126,12 @@ def cmd_track(args):
 # ── Push to remote server ────────────────────────────────────────────────────
 
 # Deploy target. Defaults to the domain (correct once DNS points at the new box);
-# override for the pre-cutover droplet:  DEPLOY_HOST=ryan@NEW_IP ./release.py build
-REMOTE_HOST = os.environ.get('DEPLOY_HOST', 'ryan@elephantlaboratories.com')
+# override for the pre-cutover droplet:  DEPLOY_HOST=prism@tetrahedron.world ./release.py build
+# The app runs as the 'prism' user on the new box (created by the migration's 02 script).
+REMOTE_HOST = os.environ.get('DEPLOY_HOST', 'prism@elephantlaboratories.com')
 SERVICE = 'elephantlaboratories'   # systemd unit: el.com :21112 + prism.com :21113
 REMOTE_APP_DIR = '~/elephantlaboratories'
-REMOTE_TRACKS_DIR = '/home/ryan/prismofeverything'
+REMOTE_TRACKS_DIR = '/home/prism/prismofeverything'
 REMOTE_JAR = f'{REMOTE_APP_DIR}/elephantlaboratories.jar'
 
 REPO_ROOT = Path(__file__).resolve().parent.parent

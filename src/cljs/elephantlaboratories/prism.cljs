@@ -12,7 +12,7 @@
            :current-index nil
            :exiting-track nil   ; track currently retreating to its grid cell
            :loaded        false
-           :grid-cols     3
+           :grid-cols     5
            :view          :catalog}))
 
 (defonce audio-el    (atom nil))
@@ -28,7 +28,10 @@
   (r/atom {:transform nil :transition false :opacity 1}))
 
 (defonce track-times  (atom {}))   ; track-name → saved playback seconds
-(defonce saved-volume (atom 1.0))  ; persists across hero mount/unmount
+(defonce saved-volume (atom 1.0))  ; persists across hero mount/unmount (audible level)
+
+;; Reactive playback state that drives the custom transport (see player-controls).
+(defonce player (r/atom {:playing false :current 0 :duration 0 :volume 1.0}))
 (defonce key-handler  (atom nil))  ; keydown listener ref for cleanup
 (defonce hash-handler (atom nil))  ; hashchange listener ref for cleanup
 
@@ -80,6 +83,82 @@
                   (when play? (.play audio)))]
           (.addEventListener audio "loadedmetadata" on-meta))
         (when play? (.play audio))))))
+
+(defn attach-audio-listeners!
+  "Mirror the <audio> element's state into the reactive `player` atom so the
+   custom controls stay in sync. Re-attached on each hero mount; the previous
+   element is discarded with its listeners, so there's nothing to detach."
+  [el]
+  (letfn [(dur [] (let [d (.-duration el)] (if (js/isFinite d) d 0)))]
+    (.addEventListener el "timeupdate"     #(swap! player assoc :current (.-currentTime el)))
+    (.addEventListener el "durationchange" #(swap! player assoc :duration (dur)))
+    (.addEventListener el "loadedmetadata" #(swap! player assoc :duration (dur)))
+    (.addEventListener el "play"           #(swap! player assoc :playing true))
+    (.addEventListener el "pause"          #(swap! player assoc :playing false))
+    (.addEventListener el "volumechange"
+                       #(let [v (.-volume el)]
+                          (swap! player assoc :volume v)
+                          ;; Only remember audible levels, so muting (→0) doesn't
+                          ;; wipe the level we restore on unmute / next track.
+                          (when (pos? v) (reset! saved-volume v))))))
+
+(defn fmt-time [secs]
+  (if (or (nil? secs) (not (js/isFinite secs)))
+    "0:00"
+    (let [s (js/Math.floor secs)
+          m (quot s 60)
+          r (mod s 60)]
+      (str m ":" (when (< r 10) "0") r))))
+
+(defn player-controls
+  "Custom, responsive transport that replaces the native <audio controls> (which
+   collapses the scrubber and hides the volume slider on narrow screens). A
+   full-width scrubber row that never collapses, plus a play/pause + volume row."
+  []
+  (let [{:keys [playing current duration volume]} @player
+        seek-max (if (and duration (pos? duration)) duration 100)]
+    [:div {:class "player"}
+     ;; ── Scrubber row: [current]  [====== seek ======]  [duration] ──
+     [:div {:class "player-scrub"}
+      [:span {:class "player-time"} (fmt-time current)]
+      [:input {:class      "player-range player-seek"
+               :type       "range"
+               :min        0
+               :max        seek-max
+               :step       "0.1"
+               :value      (min current seek-max)
+               :aria-label "Seek"
+               :on-change  (fn [e]
+                             (let [t (js/parseFloat (.. e -target -value))]
+                               (when-let [a @audio-el] (set! (.-currentTime a) t))
+                               (swap! player assoc :current t)))}]
+      [:span {:class "player-time player-time--end"} (fmt-time duration)]]
+     ;; ── Buttons row: [play] .............. [mute] [volume] ──
+     [:div {:class "player-buttons"}
+      [:button {:class      "player-btn player-play"
+                :type       "button"
+                :aria-label (if playing "Pause" "Play")
+                :on-click   (fn [_] (when-let [a @audio-el]
+                                      (if (.-paused a) (.play a) (.pause a))))}
+       (if playing "⏸" "▶")]
+      [:div {:class "player-vol"}
+       [:button {:class      "player-btn player-mute"
+                 :type       "button"
+                 :aria-label (if (zero? volume) "Unmute" "Mute")
+                 :on-click   (fn [_]
+                               (when-let [a @audio-el]
+                                 (if (pos? (.-volume a))
+                                   (set! (.-volume a) 0)
+                                   (set! (.-volume a) (if (pos? @saved-volume) @saved-volume 1.0)))))}
+        (cond (zero? volume) "🔇" (< volume 0.5) "🔉" :else "🔊")]
+       [:input {:class      "player-range player-volume"
+                :type       "range"
+                :min        0 :max 1 :step "0.01"
+                :value      volume
+                :aria-label "Volume"
+                :on-change  (fn [e]
+                              (let [v (js/parseFloat (.. e -target -value))]
+                                (when-let [a @audio-el] (set! (.-volume a) v))))}]]]]))
 
 ;; ── Favicon ──────────────────────────────────────────────────────────────────
 
@@ -349,12 +428,13 @@
        [:p  {:class "hero-description"} (:description track)]]
       [:div {:class "hero-audio"}
        [:audio {:id       "prism-audio"
-                :controls true
                 :on-ended advance-to-next!
                 :ref      (fn [el]
                            (when el
                              (reset! audio-el el)
-                             (r/after-render #(set! (.-volume el) @saved-volume))))}]]]]))
+                             (attach-audio-listeners! el)
+                             (r/after-render #(set! (.-volume el) @saved-volume))))}]
+       [player-controls]]]]))
 
 ;; ── Catalog ───────────────────────────────────────────────────────────────────
 
@@ -478,17 +558,14 @@
                           (when (= view :hero)
                             (.preventDefault e)
                             (when-let [audio @audio-el]
-                              (let [v (min 1.0 (+ (.-volume audio) 0.1))]
-                                (set! (.-volume audio) v)
-                                (reset! saved-volume v))))
+                              ;; volumechange listener syncs saved-volume + the UI
+                              (set! (.-volume audio) (min 1.0 (+ (.-volume audio) 0.1)))))
 
                           "ArrowDown"
                           (when (= view :hero)
                             (.preventDefault e)
                             (when-let [audio @audio-el]
-                              (let [v (max 0.0 (- (.-volume audio) 0.1))]
-                                (set! (.-volume audio) v)
-                                (reset! saved-volume v))))
+                              (set! (.-volume audio) (max 0.0 (- (.-volume audio) 0.1)))))
 
                           nil)))]
         (reset! key-handler handler)

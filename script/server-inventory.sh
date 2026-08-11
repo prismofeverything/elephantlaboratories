@@ -246,11 +246,18 @@ fi
   ( cd "$OUT" && find . -type f | sort | sed 's/^/  /' )
 } > "$OUT/00-summary.txt"
 
+# Package it right here — no reason to make you type the tar command yourself.
+TARBALL="$(dirname "$OUT")/inventory.tgz"
+if tar czf "$TARBALL" -C "$(dirname "$OUT")" "$(basename "$OUT")"; then
+  PACKAGED="$TARBALL  ($(du -h "$TARBALL" 2>/dev/null | cut -f1))"
+else
+  PACKAGED="(tar failed — package $OUT by hand)"
+fi
+
 echo
 echo "Done."
-echo "Inventory at: $OUT"
+echo "Inventory dir:    $OUT"
+echo "Packaged tarball: $PACKAGED"
 echo
-echo "Next:"
-echo "  tar czf inventory.tgz -C \"$(dirname "$OUT")\" \"$(basename "$OUT")\""
-echo "  # then from your laptop:"
-echo "  scp <user>@<this-host>:~/inventory.tgz ."
+echo "Only remaining step runs FROM YOUR LAPTOP (this box can't push to it):"
+echo "  scp <user>@<this-host>:$TARBALL ."
