@@ -17,6 +17,11 @@
 
 (def shopify-page "https://shop.elephantlaboratories.com/")
 
+;; Used from the home page as well as the ORGANISM pages, so they have to be
+;; declared before home-main rather than down in the ORGANISM section.
+(def organism-kickstarter "https://www.kickstarter.com/projects/elephantlaboratories/organism")
+(def organism-play "https://playorganism.io")
+
 (defn home-nav
   []
   [:nav {:class "headernav headernav--ele"}
@@ -801,8 +806,6 @@
 ;; directly on a light or a dark section with no plate behind them.
 
 (def organism-rulebook "/img/organism/organism-rulebook.pdf")
-(def organism-kickstarter "https://www.kickstarter.com/projects/elephantlaboratories/organism")
-(def organism-play "https://playorganism.io")
 
 ;; The 26 mutations, in the order they appear in the deck. Each has a matching
 ;; cut-out at assets/mutation-<name>.png and assets/thumbs/mutation-<name>.png.
@@ -811,6 +814,17 @@
    "Merge" "Persist" "Pulse" "Push" "Rain" "Regenerate" "Skip" "Project"
    "Synchronize" "Slide" "Contract" "Warp" "Pillar" "Metamorphose" "Immolate"
    "Inherit" "Reclaim" "Transmute"])
+
+(def organism-actions
+  [{:key "eat"
+    :name "EAT"
+    :blurb "Draw food in from adjacent spaces - food is what everything is made of (!)"}
+   {:key "grow"
+    :name "GROW"
+    :blurb "Spend food to add a new element to the organism. The more of that element you already have, the more food it requires."}
+   {:key "move"
+    :name "MOVE"
+    :blurb "Move an element to an adjacent space — so long as it is fed, mobile, alive, and not blocked by an opponent's element of the same type."}])
 
 (def player-colors ["red" "green" "blue" "yellow" "purple"])
 
