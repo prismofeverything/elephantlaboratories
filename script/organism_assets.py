@@ -115,23 +115,11 @@ def manifest():
         ('scene/align_43.png',           'assets/board-render.png', 1000, 'circle'),
         ('scene/contact_sheet.png',      'scene-states.jpg',    1400),
 
-        # The sculpted elements. Each sculpt_* file is a strip of three
-        # views (side, top, angled); view 1 is the top-down silhouette, which
-        # is the same shape the game prints on its cards and turn aid.
-        ('renders/sculpt_EAT_sculpt_graft_overview.png',
-                                'assets/piece-eat.png',   600, ('view', 1)),
-        ('renders/sculpt_GROW_sculpt_graft_overview.png',
-                                'assets/piece-grow.png',  600, ('view', 1)),
-        ('renders/sculpt_MOVE_sculpt_graft_overview.png',
-                                'assets/piece-move.png',  600, ('view', 1)),
-        ('renders/sculpt_EAT_sculpt_graft_overview.png',
-                                'assets/piece-eat-side.png',  500, ('view', 2)),
-        ('renders/sculpt_GROW_sculpt_graft_overview.png',
-                                'assets/piece-grow-side.png', 500, ('view', 2)),
-        ('renders/sculpt_MOVE_sculpt_graft_overview.png',
-                                'assets/piece-move-side.png', 500, ('view', 2)),
-        ('scene/food_iso_top.png',       'assets/piece-food.png', 700, 'knockout'),
-        ('renders/grafts_overview.png',  'piece-grafts.jpg',      900),
+        # The sculpted elements are NOT built here — the strips under renders/
+        # are pre-sculpt blanks. The current pieces exist only as print-ready
+        # meshes (organism/pieces/stl/{EAT,GROW,MOVE,FOOD_snap}.stl, regenerated
+        # 2026-08-09), so they are rendered with Blender by script/render_pieces.py
+        # into assets/piece-*.png. Re-run that when the sculpts change.
     ]
 
     for color in PLAYER_COLORS:
@@ -401,6 +389,9 @@ PRINT_MASTERS = [
     ('03_BOX/box_wrap_457mm.pdf',              'box-wrap.jpg',                1600, 1),
 ]
 
+# Not an image — copied through as the download the site links to.
+RULEBOOK = ('04_RULEBOOK/rulebook_18pp.pdf', 'organism-rulebook.pdf')
+
 # Photographs of the built game. These beat any render for showing what the
 # thing actually is, so they lead the pages.
 PHOTOGRAPHS = [
@@ -455,6 +446,21 @@ def build_print_masters(force):
         made.append(dest)
         print(f'  {dest_name:<34} from print master  {dest.stat().st_size/1024:.0f} KB')
     return made
+
+
+def build_rulebook(force):
+    source_rel, dest_name = RULEBOOK
+    source = PRINT_READY / source_rel
+    dest = DEST / dest_name
+    if not source.is_file():
+        print(f'  rulebook master not found: {source_rel}', file=sys.stderr)
+        return []
+    if not force and dest.is_file() and dest.stat().st_mtime >= source.stat().st_mtime:
+        return []
+    shutil.copyfile(source, dest)
+    print(f'  {dest_name:<34} rulebook from print master  '
+          f'{dest.stat().st_size/1024/1024:.1f} MB')
+    return [dest]
 
 
 def build_photographs(force):
@@ -572,6 +578,7 @@ def main():
         print(f'  {dest_name:<34} {size[0]}x{size[1]}  {dest.stat().st_size/1024:.0f} KB')
 
     built += len(build_print_masters(args.force))
+    built += len(build_rulebook(args.force))
     built += len(build_photographs(args.force))
     built += len(build_symbols(args.force))
     built += len(build_clips(args.force))

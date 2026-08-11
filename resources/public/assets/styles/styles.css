@@ -1992,6 +1992,19 @@ input.subscribe__submit--ele {
     background: none;
     color: var(--organism-slate);
     border-color: var(--organism-slate); }
+  /* ...except over the hero and page headers, where the ground is the
+     painting and a slate outline disappears into it. These need to
+     out-specify the rule above, hence the doubled class. */
+  .organism-theme .container--organismheader .button--outline:link,
+  .organism-theme .container--organismheader .button--outline:visited,
+  .organism-theme .container--pageheader .button--outline:link,
+  .organism-theme .container--pageheader .button--outline:visited {
+    color: #ffffff;
+    border-color: #ffffff; }
+  .organism-theme .container--dark .button--outline:link,
+  .organism-theme .container--dark .button--outline:visited {
+    color: var(--organism-eat);
+    border-color: var(--organism-eat); }
 
 /* Rule blocks. Same geometry as Sol's, but the bullet is the game's own
    EAT / GROW / MOVE glyph, tinted by CSS mask so one white PNG serves all

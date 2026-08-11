@@ -980,7 +980,7 @@
          [:a {:href "/organism/components"} "See every component "
           [:nobr "»"]]]]
        [:div {:class "half-and-half__item half-and-half__item--image"}
-        [:img {:src "/img/organism/scene-organisms.jpg", :alt "ORGANISM in play", :class "image--featured", :width "600", :height "400", :loading "lazy"}]]]]]
+        [:img {:src "/img/organism/photo-closeup.jpg", :alt "ORGANISM set up and in play", :class "image--featured", :width "600", :height "400", :loading "lazy"}]]]]]
     [:div {:class "container container--light container--organismteaser"}
      [:div {:class "constrainer"}
       [:div {:class "half-and-half"}
@@ -991,6 +991,10 @@
          [:p
           [:a {:href "/organism/mutations"} "All 26 mutations "
            [:nobr "»"]]]]
+        [:div {:class "organism-rule organism-rule--eat"}
+         [:h2 {:class "h2"} "Designed by Ryan Spangler"]
+         [:img {:src "/img/organism/photo-ryan.jpg", :alt "Ryan Spangler teaching ORGANISM", :class "image--featured", :width "480", :height "320", :loading "lazy"}]
+         [:p "Fifteen years of Elephant Laboratories, and the same question every time: what is the smallest set of rules that still surprises you?"]]
         [:div {:class "organism-rule organism-rule--grow"}
          [:h2 {:class "h2"} "The rulebook"]
          [:p
