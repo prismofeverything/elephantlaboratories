@@ -49,6 +49,11 @@ SOURCE = Path(os.environ.get(
 # component art — earlier intermediates elsewhere in the repo are stale.
 PRINT_READY = SOURCE / 'prototype' / 'print_ready'
 PHOTOS = Path(os.environ.get('ORGANISM_PHOTOS', Path.home() / 'Downloads')).expanduser()
+# The rule clips are re-rendered outside the repo and arrive as a Drive export.
+# This set (18-24 June) supersedes the 8-9 June copies still sitting in
+# pieces/scene/, which are a generation behind — no plasma, older sculpts.
+CLIP_SOURCE = Path(os.environ.get(
+    'ORGANISM_CLIPS', Path.home() / 'Downloads' / 'ORGANISM videos')).expanduser()
 
 JPEG_QUALITY = 88
 
@@ -101,9 +106,6 @@ def manifest():
     items = [
         # The box — cover art carries the whole identity, so it appears at
         # hero size, at card size on the home page, and as a page backdrop.
-        ('clip_assets/box_top.png',      'box-cover.jpg',      1400),
-        ('clip_assets/box_top.png',      'box-cover-500.jpg',   500),
-        ('clip_assets/box_wrap.png',     'box-wrap.jpg',       1600),
 
         # Boards, aids and the box now come from print_ready (see
         # PRINT_MASTERS below) — these older intermediates were superseded.
@@ -384,10 +386,13 @@ PRINT_MASTERS = [
                                                'assets/board-pent.png',       1600, 1),
     ('01_MOUNT_chipboard/power_score_board_165mm.pdf',
                                                'assets/power-board.png',      1200, 1),
-    ('03_BOX/box_top_VECTOR.pdf',              'box-cover.jpg',               1400, 1),
-    ('03_BOX/box_top_VECTOR.pdf',              'box-cover-500.jpg',            500, 1),
     ('03_BOX/box_wrap_457mm.pdf',              'box-wrap.jpg',                1600, 1),
 ]
+
+# Where the cover ends and the sides begin, as a fraction of the wrap sheet.
+# Verified by cropping the net at this fraction: the result is exactly the
+# printed cover — title, credits and logo all correctly placed.
+BOX_FOLD = 0.18
 
 # Not an image — copied through as the download the site links to.
 RULEBOOK = ('04_RULEBOOK/rulebook_18pp.pdf', 'organism-rulebook.pdf')
@@ -404,19 +409,11 @@ PHOTOGRAPHS = [
 # per action with a CSS mask, so one file serves every colour.
 SYMBOLS = ['eat', 'grow', 'move']
 
-# The rule clips, in the order a rulebook would teach them.
+# The rule clips, in the order they are taught on the site.
 RULE_CLIPS = [
-    ('clip_board',      'The board',    'Concentric rings of hexes, from the contested centre to the rim.'),
-    ('clip_eat',        'EAT',          'Draw food in from the space an element occupies.'),
-    ('clip_grow',       'GROW',         'Spend food to add an element to the organism.'),
-    ('clip_move',       'MOVE',         'Carry an element into a neighbouring space.'),
-    ('clip_circulate',  'CIRCULATE',    'Pass food between the elements of one organism.'),
-    ('clip_two_org',    'Two organisms','Split, and each half acts on its own.'),
-    ('clip_three_org',  'Three organisms', 'And again — the shape you make is the game.'),
-    ('clip_conflict',   'Conflict',     'What happens when rival elements of a type meet.'),
-    ('clip_perish',     'Integrity',    'An organism that cannot hold together comes apart.'),
-    ('clip_power',      'Power',        'Holding the centre pays, and the power board tracks it.'),
-]
+    'clip_eat', 'clip_move', 'clip_grow', 'clip_circulate', 'clip_conflict',
+    'clip_perish', 'clip_power', 'clip_two_org', 'clip_three_org',
+    'zach-dan-ryan-play']
 
 
 def build_print_masters(force):
@@ -445,6 +442,28 @@ def build_print_masters(force):
         scratch.unlink(missing_ok=True)
         made.append(dest)
         print(f'  {dest_name:<34} from print master  {dest.stat().st_size/1024:.0f} KB')
+    return made
+
+
+# box_top_VECTOR.pdf renders the whole net (the cover repeated onto all four
+# sides), so the cover has to be cut out of its middle at the fold.
+def build_cover(force):
+    source = DEST / 'box-wrap.jpg'
+    if not source.is_file():
+        return []
+    made = []
+    for dest_name, width in (('box-cover.jpg', 1400), ('box-cover-500.jpg', 500)):
+        dest = DEST / dest_name
+        if not force and dest.is_file() and dest.stat().st_mtime >= source.stat().st_mtime:
+            continue
+        image = Image.open(source).convert('RGB')
+        w, h = image.size
+        image = image.crop((int(w * BOX_FOLD), int(h * BOX_FOLD),
+                            int(w * (1 - BOX_FOLD)), int(h * (1 - BOX_FOLD))))
+        image.thumbnail((width, width), Image.LANCZOS)
+        image.save(dest, 'JPEG', quality=JPEG_QUALITY, optimize=True, progressive=True)
+        made.append(dest)
+        print(f'  {dest_name:<34} cover cut from the net  {dest.stat().st_size/1024:.0f} KB')
     return made
 
 
@@ -506,8 +525,10 @@ def build_clips(force):
     made = []
     videos = DEST / 'video'
     videos.mkdir(parents=True, exist_ok=True)
-    for name, _, _ in RULE_CLIPS:
-        source = SOURCE / 'scene' / f'{name}.mp4'
+    for name in RULE_CLIPS:
+        source = CLIP_SOURCE / f'{name}.mp4'
+        if not source.is_file():                      # fall back to the repo copy
+            source = SOURCE / 'scene' / f'{name}.mp4'
         dest = videos / f'{name}.mp4'
         poster = videos / f'{name}.jpg'
         if not source.is_file():
@@ -578,6 +599,7 @@ def main():
         print(f'  {dest_name:<34} {size[0]}x{size[1]}  {dest.stat().st_size/1024:.0f} KB')
 
     built += len(build_print_masters(args.force))
+    built += len(build_cover(args.force))
     built += len(build_rulebook(args.force))
     built += len(build_photographs(args.force))
     built += len(build_symbols(args.force))

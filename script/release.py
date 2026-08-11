@@ -154,6 +154,15 @@ def sync_tracks():
 # build happens to be lying there (a `watch` dev build, most likely).
 def build_cljs():
     print('=== Building ClojureScript (shadow-cljs release) ===', file=sys.stderr)
+    # `shadow-cljs release` overwrites app.js but leaves behind whatever a
+    # previous `watch` session wrote — the whole cljs-runtime/ dev build sits
+    # in resources/ and gets packaged into the jar as ordinary resources.
+    # Clear it first so the jar carries the release bundle and nothing else.
+    stale = CLJS_OUTPUT.parent / 'cljs-runtime'
+    if stale.is_dir():
+        shutil.rmtree(stale)
+        print(f'cleared stale dev build: {stale}', file=sys.stderr)
+    (CLJS_OUTPUT.parent / 'manifest.edn').unlink(missing_ok=True)
     run(['npx', 'shadow-cljs', 'release', 'app'], cwd=str(REPO_ROOT))
     if not CLJS_OUTPUT.is_file():
         raise SystemExit(f'shadow-cljs produced no output at {CLJS_OUTPUT}')

@@ -78,14 +78,15 @@
     [:div {:class "constrainer"}
      [:div {:class "golden"}
       [:div {:class "golden__item golden__item--a"}
-       [:img {:src "/img/organism/box-cover-500.jpg", :alt "Box cover: ORGANISM", :class "image--featured", :width "500", :height "500"}]]
+       [:img {:src "/img/organism/box-hero-500.png", :alt "The ORGANISM box", :class "image--featured", :width "500", :height "500"}]]
       [:div {:class "golden__item golden__item--b"}
        [:h2 {:class "h2--kicker h2--kicker--ele"} "Our newest game"]
        [:h3 {:class "h2 h2--ele"} "ORGANISM "
         [:span {:class "h2__tagline h2__tagline--ele"} "Eat · Grow · Move"]]
-       [:p "ORGANISM is a game of growth, multiplication, and struggle for 1–6 players. Wielding the simple actions of EAT / GROW / MOVE / CIRCULATE the minimal ruleset is maximally integrated and generates a tight yet boundless decision space. Amplified by a set of mutation cards which expand the rules in countless subtle and not-so-subtle ways, it is really a family of related games in a single box that can never be " [:nobr "truly exhausted."]]
+       [:p "ORGANISM is a game of growth, multiplication, and struggle for 1–6 players. Every organism is capable of 4 things: EAT / GROW / MOVE / CIRCULATE. The minimal ruleset is maximally integrated to generate a tight yet boundless decision space. Amplified by a set of mutation cards which expand the rules in countless subtle and not-so-subtle ways, it is in fact family of related games in a single box that can never be " [:nobr "truly exhausted."]]
        [:p
-        [:a {:href "/organism", :class "button button--ele"} "Learn More"]]]]]
+        [:a {:href "/organism", :class "button button--ele"} "Learn More"]
+        [:a {:href organism-kickstarter, :rel "external", :target "_blank", :class "button button--ele"} "Back it on Kickstarter"]]]]]
     [:div {:class "constrainer"}
      [:hr]]
     [:div {:class "constrainer"}
@@ -800,6 +801,8 @@
 ;; directly on a light or a dark section with no plate behind them.
 
 (def organism-rulebook "/img/organism/organism-rulebook.pdf")
+(def organism-kickstarter "https://www.kickstarter.com/projects/elephantlaboratories/organism")
+(def organism-play "https://playorganism.io")
 
 ;; The 26 mutations, in the order they appear in the deck. Each has a matching
 ;; cut-out at assets/mutation-<name>.png and assets/thumbs/mutation-<name>.png.
@@ -814,29 +817,29 @@
 ;; The rule clips, in teaching order. Each is a short silent loop rendered from
 ;; the same scene as the trailer, so they carry the current sculpts and colours.
 (def rule-clips
-  [{:file "clip_board"     :title "The board"       :blurb "Concentric rings of hexes, from the contested centre out to the rim."}
-   {:file "clip_eat"       :title "EAT"             :blurb "Draw food in from the space an element occupies."}
-   {:file "clip_grow"      :title "GROW"            :blurb "Spend food to add a new element to the organism."}
-   {:file "clip_move"      :title "MOVE"            :blurb "Carry an element into a neighbouring space."}
-   {:file "clip_circulate" :title "CIRCULATE"       :blurb "Pass food between the elements of one organism."}
-   {:file "clip_two_org"   :title "Two organisms"   :blurb "Split, and each half takes its own action."}
-   {:file "clip_three_org" :title "Three organisms" :blurb "And again — the shape you make is the game."}
-   {:file "clip_conflict"  :title "Conflict"        :blurb "What happens when rival elements of the same type meet."}
-   {:file "clip_perish"    :title "Integrity"       :blurb "An organism that cannot hold itself together comes apart."}
-   {:file "clip_power"     :title "Power"           :blurb "Holding the centre pays, and the power board keeps the score."}])
+  [{:file "clip_eat"            :title "EAT"              :blurb "take food into your organism"}
+   {:file "clip_move"           :title "MOVE"             :blurb "move a fed/mobile element to an open space"}
+   {:file "clip_grow"           :title "GROW"             :blurb "spend food to make a new element"}
+   {:file "clip_circulate"      :title "CIRCULATE"        :blurb "send half the food from one element to another"}
+   {:file "clip_conflict"       :title "CONFLICT"         :blurb "elements of different players conflict"}
+   {:file "clip_perish"         :title "PERISH"           :blurb "if an organism is missing any element type, it perishes"}
+   {:file "clip_power"          :title "POWER"            :blurb "for each turn you held the center, and each element you unravel"}
+   {:file "clip_two_org"        :title "TWO ORGANISMS"    :blurb "each organism you control gets its own turn"}
+   {:file "clip_three_org"      :title "THREE ORGANISMS"  :blurb "if you ever have three living organisms at any time on your turn you win (!)"}
+   {:file "zach-dan-ryan-play"  :title "PLAY"             :blurb "an example of play"}])
 
 (defn rule-clip
   [{:keys [file title blurb]}]
   [:figure {:class "clip"}
+   [:h3 {:class "h3 clip__title"} title]
+   [:p {:class "clip__blurb"} blurb]
    [:video {:class "clip__video"
             :src (str "/img/organism/video/" file ".mp4")
             :poster (str "/img/organism/video/" file ".jpg")
             :muted true :loop true :playsInline true :controls true
             :preload "none"
             :width "560" :height "315"}]
-   [:figcaption {:class "clip__caption"}
-    [:h3 {:class "h3 clip__title"} title]
-    [:p blurb]]])
+   ])
 
 (defn rule-clips-grid
   []
@@ -911,7 +914,9 @@
     [:li {:class "headernav__menu__item"}
      [:a {:href "/organism/components"} "Components"]]
     [:li {:class "headernav__menu__item"}
-     [:a {:href "/organism/sign-up"} "Sign up"]]]])
+     [:a {:href organism-play :rel "external" :target "_blank"} "Play"]]
+    [:li {:class "headernav__menu__item"}
+     [:a {:href organism-kickstarter :rel "external" :target "_blank"} "Back it »"]]]])
 
 (defn organism-header
   []
@@ -921,10 +926,11 @@
      [:h1 {:class "h1 masthead__h1 masthead__h1--organism"} "ORGANISM"]
      [:h2 {:class "h2 masthead__h2"} "Eat · Grow · Move"
       [:span "From Elephant Laboratories"]]
-     [:p "ORGANISM is a game of growth, multiplication, and struggle for 1–6 players. Wielding the simple actions of EAT / GROW / MOVE / CIRCULATE the minimal ruleset is maximally integrated and generates a tight yet boundless decision space. Amplified by a set of mutation cards which expand the rules in countless subtle and not-so-subtle ways, it is really a family of related games in a single box that can never be " [:nobr "truly exhausted."]]
+     [:p "ORGANISM is a game of growth, multiplication, struggle and attainment for 1–6 players. With only the simple actions of EAT / GROW / MOVE / CIRCULATE the minimal ruleset is maximally integrated to generate a tight yet boundless decision space. Amplified by a set of mutation cards which expand the rules in subtle to extreme (and exponential) effect, it is in fact a family of related games that can never be " [:nobr "truly exhausted."]]
      [:p {:class "buttonwrap"}
-      [:a {:href "#what", :class "button buttonwrap__button"} "Learn More"]
-      [:a {:href "/organism/sign-up", :class "button buttonwrap__button button--outline"} "Sign up!"]]
+      [:a {:href organism-kickstarter, :rel "external", :target "_blank", :class "button buttonwrap__button"} "Back it on Kickstarter"]
+      [:a {:href organism-play, :rel "external", :target "_blank", :class "button buttonwrap__button button--outline"} "Play it online"]
+      [:a {:href "#what", :class "button buttonwrap__button button--outline"} "Learn more"]]
      [:aside {:class "current-status"}
       [:strong "CURRENT STATUS"]": campaign imminent!"]]]])
 
@@ -943,7 +949,7 @@
      [:div {:class "constrainer"}
       [:div {:class "half-and-half"}
        [:div {:class "half-and-half__item"}
-        [:img {:src "/img/organism/box-cover.jpg", :alt "Box cover: ORGANISM", :class "image--featured", :width "500", :height "500"}]]
+        [:img {:src "/img/organism/box-hero.png", :alt "The ORGANISM box", :class "image--featured", :width "500", :height "500"}]]
        [:div {:class "half-and-half__item"}
         [:div {:class "organism-rule organism-rule--eat"}
          [:h2 {:class "h2"} "What is ORGANISM?"]
@@ -961,7 +967,7 @@
           [:img {:src (cutout (str "piece-" key)), :alt (str "Sculpted element: " name), :class "element-row__piece", :width "300", :height "300", :loading "lazy"}]
           [:h2 {:class "h2"} name]
           [:p blurb]]))
-      [:p {:class "align-center"} "…CIRCULATE, which moves food within the organism, nourishing/mobilizing every part of the sprawling beast."]]]
+      [:p {:class "align-center"} "…and CIRCULATE! which moves food within the organism, nourishing/mobilizing every part of the sprawling beast."]]]
     [:div {:class "container container--dark"}
      [:div {:class "constrainer"}
       [:div {:class "half-and-half"}
@@ -992,16 +998,16 @@
           [:a {:href "/organism/mutations"} "All 26 mutations "
            [:nobr "»"]]]]
         [:div {:class "organism-rule organism-rule--eat"}
-         [:h2 {:class "h2"} "Designed by Ryan Spangler"]
+         [:h2 {:class "h2"} "the designer"]
          [:img {:src "/img/organism/photo-ryan.jpg", :alt "Ryan Spangler teaching ORGANISM", :class "image--featured", :width "480", :height "320", :loading "lazy"}]
-         [:p "Fifteen years of Elephant Laboratories, and the same question every time: what is the smallest set of rules that still surprises you?"]]
+         [:p "Fifteen years of Elephant Laboratories, boundless possibility, compounding insight, endless creation"]]
         [:div {:class "organism-rule organism-rule--grow"}
-         [:h2 {:class "h2"} "The rulebook"]
+         [:h2 {:class "h2"} "the rulebook"]
          [:p
           [:a {:href organism-rulebook, :rel "external"} "Read the rulebook "
            [:nobr "»"]]]]]
        [:div {:class "half-and-half__item"}
-        [:img {:src (cutout "board-hex"), :alt "The ORGANISM board", :class "image--featured", :width "500", :height "500", :loading "lazy"}]]]]]]])
+        [:img {:src (cutout "board-hex"), :alt "the ORGANISM board", :class "image--featured", :width "500", :height "500", :loading "lazy"}]]]]]]])
 
 (defn organism-gameplay
   []
@@ -1016,16 +1022,18 @@
        [:div {:class "half-and-half__item"}
         [:div {:class "organism-rule organism-rule--eat"}
          [:h2 {:class "h2"} "A turn"]
-         [:p "Introduce your starting elements, then on each turn choose one organism and one element type, and take that action with every element of that type — or circulate instead. Hold the centre at the start of your turn and it is yours. Then conflicts resolve, and every organism is checked for integrity."]
-         [:p "The turn aid holds all of it on one disc; it is the only reference the table needs."]
+         [:p "On each turn: if no organisms on the board, introduce elements - then choose EAT/MOVE/GROW: you get an action for each element of that type in your organism. Then for each: do that action or circulate instead (!) Hold the core for the entire round until the start of your next turn and gain power. Gain power also when conflicts resolve, and every organism is checked for integrity. Win without power by creating three separate organisms (!)"]
+         [:p "The player diagram captures all of this in one inscrutable sigil - the entire game is there"]
          [:p
           [:a {:href organism-rulebook, :rel "external", :class "button"} "Read the rulebook"]]]]
        [:div {:class "half-and-half__item"}
-        [:img {:src (cutout "player-aid"), :alt "ORGANISM turn aid: introduce, perform actions, occupy core, resolve conflicts, check integrity", :class "image--featured", :width "560", :height "560"}]]]]]
+        [:a {:href (cutout "player-aid"), :target "_blank", :rel "noopener", :class "aid-link"
+             :title "Open the full-size turn aid"}
+         [:img {:src (cutout "player-aid"), :alt "ORGANISM turn aid: introduce, perform actions, occupy core, resolve conflicts, check integrity", :class "image--featured aid-disc", :width "560", :height "560"}]]]]]]
     [:div {:class "container container--dark"}
      [:div {:class "constrainer"}
       [:h2 {:class "h2 align-center"} "The elements"]
-      [:p {:class "align-center measure"} "Each element is a sculpted piece that does one thing. An organism is whatever collection of them you are holding together at the moment — and it stops being an organism the moment the pieces stop touching."]
+      [:p {:class "align-center measure"} "Each element is a sculpted piece that is one component of a larger organism. Wield your organisms to victory (!)"]
       (into
        [:div {:class "element-row"}]
        (for [{:keys [key name blurb]} organism-actions]
@@ -1042,11 +1050,12 @@
        [:div {:class "half-and-half__item half-and-half__item--image"}
         [:img {:src "/img/organism/photo-table.jpg", :alt "Playing ORGANISM at the table", :class "image--featured", :width "440", :height "660", :loading "lazy"}]]]
       [:p {:class "align-center"}
-       [:a {:href "/organism/mutations", :class "button"} "Then add mutations"]]]]
+       [:a {:href "/organism/mutations", :class "button"} "Then add mutations"]
+       [:a {:href organism-play, :rel "external", :target "_blank", :class "button button--outline"} "Play it online"]]]]
     [:div {:class "container container--dark"}
      [:div {:class "constrainer"}
-      [:h2 {:class "h2 align-center"} "Every rule, in about ten seconds each"]
-      [:p {:class "align-center measure"} "One short clip per rule, in the order you would teach them."]
+      [:h2 {:class "h2 align-center"} "A demonstration of every rule"]
+      [:p {:class "align-center measure"} "in the order you would teach them"]
       [rule-clips-grid]]]]])
 
 (defn organism-mutations
@@ -1059,9 +1068,9 @@
     [:div {:class "container container--light"}
      [:div {:class "constrainer"}
       [:div {:class "measure"}
-       [:h2 {:class "h2"} "Twenty-six ways to break your own game"]
-       [:p "A mutation is one card that changes one rule. WARP makes distant spaces adjacent. PILLAR puts something on the board that nothing may share a space with. PERSIST stops elements dying to integrity at all — and quietly changes what every other card means."]
-       [:p "Deal none of them and ORGANISM is a tight, clean game about shape. Deal a few and it becomes a different tight, clean game. They compose, and they do not always compose gently."]
+       [:h2 {:class "h2"} "2x13 ways to alter play - from simple to wild new games.... then combine them"]
+       [:p "A mutation is an atomic change to the rules. WARP makes distant spaces adjacent. PILLAR puts something on the board that nothing may share a space with. PERSIST stops elements from dying to integrity — and a host of others"]
+       [:p "Base ORGANISM is the most clear and direct version of the game. Each mutation gives a new angle, and with enough you have entered a new reality entirely"]
        [:p "Each card below opens full size — the exact rule is printed on the card."]]]]
     [:div {:class "container container--dark"}
      [:div {:class "constrainer"}
@@ -1069,8 +1078,9 @@
     [:div {:class "container container--light"}
      [:div {:class "constrainer"}
       [:p {:class "align-center"}
-       [:a {:href organism-rulebook, :rel "external", :class "button"} "Read the rulebook"]
-       [:a {:href "/organism/sign-up", :class "button button--outline"} "Sign up!"]]]]]])
+       [:a {:href organism-kickstarter, :rel "external", :target "_blank", :class "button"} "Back it on Kickstarter"]
+       [:a {:href organism-play, :rel "external", :target "_blank", :class "button button--outline"} "Play it online"]
+       [:a {:href organism-rulebook, :rel "external", :class "button button--outline"} "Read the rulebook"]]]]]])
 
 (defn organism-components
   []
@@ -1082,21 +1092,21 @@
     [:div {:class "container container--light"}
      [:div {:class "constrainer"}
       [:div {:class "measure"}
-       [:h2 {:class "h2"} "Almost everything is a circle"]
-       [:p "The board, the plateaus, the power board, the turn aid, all 26 mutation cards — every one of them is a disc. Only the box and the sculpted elements are not."]]]]
+       [:h2 {:class "h2"} "everything is a circle"]
+       [:p "board, platforms, power board, player diagram, 26 mutation cards — every one of them is a disc. Even the pieces are radial in symmetry. Only the box .... (and we tried)"]]]]
     [:div {:class "container container--dark"}
      [:div {:class "constrainer"}
       [:div {:class "half-and-half"}
        [:div {:class "half-and-half__item"}
         [:h2 {:class "h2"} "The board"]
-        [:p "One disc, printed on both faces — hexes on one side, pentagons on the other. Concentric rings run from the contested centre out to the rim where organisms are introduced."]]
+        [:p "One disc, printed on both faces — hexagonal on one side, pentagonal on the other (for the 5 player game). Concentric rings emanate from the core out to the rim where organisms are introduced."]]
        [:div {:class "half-and-half__item half-and-half__item--image"}
         [:img {:src (cutout "board-hex"), :alt "The ORGANISM board, hex face", :class "image--featured", :width "380", :height "380"}]
         [:img {:src (cutout "board-pent"), :alt "The ORGANISM board, pentagon face", :class "image--featured", :width "380", :height "380", :loading "lazy"}]]]]]
     [:div {:class "container container--light"}
      [:div {:class "constrainer"}
-      [:h2 {:class "h2 align-center"} "Five player plateaus"]
-      [:p {:class "align-center measure"} "One per player, each in its own colour, holding the elements you have yet to introduce."]
+      [:h2 {:class "h2 align-center"} "Five player platforms"]
+      [:p {:class "align-center measure"} "One per player, each in its own color: relevant to some mutations"]
       [plateau-row]]]
     [:div {:class "container container--dark"}
      [:div {:class "constrainer"}
@@ -1108,14 +1118,14 @@
       [:div {:class "half-and-half"}
        [:div {:class "half-and-half__item"}
         [:h2 {:class "h2"} "The power board"]
-        [:p "Tracks each player’s standing around its rings."]]
+        [:p "Tracks how much power each player has attained in the game"]]
        [:div {:class "half-and-half__item"}
         [:h2 {:class "h2"} "The turn aid"]
-        [:p "The whole turn structure on one disc."]]]]]
+        [:p "The whole game on a wheel."]]]]]
     [:div {:class "container container--light"}
      [:div {:class "constrainer"}
       [:h2 {:class "h2 align-center"} "The sculpted elements"]
-      [:p {:class "align-center measure"} "EAT, GROW and MOVE are distinct shapes in the hand — you can tell an organism’s makeup by touch."]
+      [:p {:class "align-center measure"} "EAT, GROW and MOVE each have their own radial symmetry — board state is immediately apprehensible"]
       [:div {:class "half-and-half"}
        [:div {:class "half-and-half__item half-and-half__item--image"}
         [:img {:src "/img/organism/photo-closeup.jpg", :alt "The sculpted elements on the board", :class "image--featured", :width "600", :height "400", :loading "lazy"}]]
@@ -1131,8 +1141,11 @@
      [:div {:class "constrainer"}
       [:div {:class "half-and-half"}
        [:div {:class "half-and-half__item half-and-half__item--image"}
-        [:img {:src "/img/organism/box-wrap.jpg", :alt "The ORGANISM box", :class "image--featured", :width "600", :height "600", :loading "lazy"}]]
+        [:img {:src "/img/organism/box-hero.png", :alt "The ORGANISM box", :class "image--featured", :width "600", :height "600", :loading "lazy"}]]
        [:div {:class "half-and-half__item"}
+        [:p {:class "buttonwrap"}
+         [:a {:href organism-kickstarter, :rel "external", :target "_blank", :class "button"} "Back it on Kickstarter"]
+         [:a {:href organism-play, :rel "external", :target "_blank", :class "button button--outline"} "Play it online"]]
         [:h2 {:class "h2"} "The box"]
         [:p "Artwork by Wyn Tiedmers, wrapping all six faces."]
         [:p
@@ -1149,7 +1162,7 @@
      [:div {:class "constrainer"}
       [:div {:class "measure"}
        [:h2 {:class "h2"} "Be here when ORGANISM lands"]
-       [:p "We are heading into a campaign for ORGANISM. Sign up and we will let you know when it opens — and nothing else."]
+       [:p "We are embarking campaign for ORGANISM, August 25th! Sign up to receive ongoing updates"]
        [:p {:style {:color "#a19364"}} "(We will only use your information to send you occasional updates on our games. "
         [:br]
         " You can opt out at any time. We will never sell or share your information.)"]
@@ -1243,13 +1256,11 @@
     [:li {:class "footer__menu__social"}
      [:p "Connect with us"]
      [:p
-      [:a {:href "mailto:mothership@elephantlaboratories.com"} "mothership@elephantlaboratories.com"]]]]
+      [:a {:href "mailto:ryan@elephantlaboratories.com"} "ryan@elephantlaboratories.com"]]]]
    [:div {:class "footer__copyright"}
     [:p "© 2026 Elephant Laboratories, LLC. "
      [:nobr "All rights reserved. | "
-      [:a {:href "/"} "Contact Us"]]]
-    [:p "Built by "
-     [:a {:href "https://www.happyfanfare.com", :rel "external"} "Happy Fanfare"]]]])
+      [:a {:href "/"} "Contact Us"]]]]])
 
 (defn home-page
   []

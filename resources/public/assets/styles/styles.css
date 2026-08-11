@@ -2045,21 +2045,19 @@ input.subscribe__submit--ele {
       -webkit-mask-image: url("/img/organism/assets/symbol-move.png");
       mask-image: url("/img/organism/assets/symbol-move.png"); } }
 
-/* The rule clips. */
+/* The rule clips — one per line, each introduced by its own heading, so a
+   rule is read then watched rather than hunted for in a grid. */
 .clip-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2.5rem 2rem;
+  display: block;
   margin: 2rem 0; }
-  @media (min-width: 40em) {
-    .clip-grid {
-      grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 70em) {
-    .clip-grid {
-      grid-template-columns: repeat(3, 1fr); } }
 
 .clip {
-  margin: 0; }
+  margin: 0 0 3.5rem;
+  max-width: 46rem;
+  margin-left: auto;
+  margin-right: auto; }
+  .clip:last-child {
+    margin-bottom: 0; }
 
 .clip__video {
   display: block;
@@ -2068,11 +2066,25 @@ input.subscribe__submit--ele {
   background: var(--organism-ink);
   border-radius: 3px; }
 
-.clip__caption {
-  padding-top: 0.75rem; }
-  .clip__caption p {
-    margin-top: 0.25rem; }
+.clip__blurb {
+  margin: 0.25rem 0 0.9rem; }
 
 .clip__title {
   margin: 0;
   color: var(--organism-eat); }
+
+/* The printed turn aid is a square card whose design sits inside a disc, so a
+   circular crop loses nothing and matches every other component. It links to
+   the full-size file — the type on it is unreadable at page size. */
+.aid-link {
+  display: block;
+  border: 0; }
+.aid-disc {
+  border-radius: 50%;
+  transition: transform 150ms ease-out; }
+  .aid-link:hover .aid-disc,
+  .aid-link:focus .aid-disc {
+    transform: scale(1.02); }
+@media (prefers-reduced-motion: reduce) {
+  .aid-disc { transition: none; }
+  .aid-link:hover .aid-disc { transform: none; } }
