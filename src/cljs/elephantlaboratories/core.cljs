@@ -828,36 +828,6 @@
    {:file "clip_three_org"      :title "THREE ORGANISMS"  :blurb "if you ever have three living organisms at any time on your turn you win (!)"}
    {:file "zach-dan-ryan-play"  :title "PLAY"             :blurb "an example of play"}])
 
-(defn rule-clip
-  [{:keys [file title blurb]}]
-  [:figure {:class "clip"}
-   [:h3 {:class "h3 clip__title"} title]
-   [:p {:class "clip__blurb"} blurb]
-   [:video {:class "clip__video"
-            :src (str "/img/organism/video/" file ".mp4")
-            :poster (str "/img/organism/video/" file ".jpg")
-            :muted true :loop true :playsInline true :controls true
-            :preload "none"
-            :width "560" :height "315"}]
-   ])
-
-(defn rule-clips-grid
-  []
-  (into [:div {:class "clip-grid"}]
-        (for [clip rule-clips]
-          ^{:key (:file clip)} [rule-clip clip])))
-
-(def organism-actions
-  [{:key "eat"
-    :name "EAT"
-    :blurb "Draw food in from adjacent spaces - food is what everything is made of (!)"}
-   {:key "grow"
-    :name "GROW"
-    :blurb "Spend food to add a new element to the organism. The more of that element you already have, the more food it requires."}
-   {:key "move"
-    :name "MOVE"
-    :blurb "Move an element to an adjacent space — so long as it is fed, mobile, alive, and not blocked by an opponent's element of the same type."}])
-
 (defn cutout
   "Path to a trimmed, transparent component cut-out."
   ([name] (cutout name false))
@@ -869,7 +839,9 @@
   (let [slug (string/lower-case mutation)]
     [:a {:class "mutation chocolat-image"
          :href (cutout (str "mutation-" slug))
-         :title (str mutation " — an ORGANISM mutation")}
+         :target "_blank"
+         :rel "noopener"
+         :title (str mutation " — open the full-size card")}
      [:img {:src (cutout (str "mutation-" slug) true)
             :alt (str "Mutation card: " mutation)
             :class "mutation__image"
@@ -899,6 +871,58 @@
             :width "180"
             :height "180"
             :loading "lazy"}])))
+
+;; The action clips are short silent loops, so they play like animated stills.
+;; A shared IntersectionObserver starts one only once it is actually on screen
+;; — otherwise a visitor downloads ten videos at once. Same approach as the
+;; learn page in ../organism.
+(defonce clip-observer
+  (delay
+    (when (exists? js/IntersectionObserver)
+      (js/IntersectionObserver.
+       (fn [entries]
+         (doseq [entry entries]
+           (let [video (.-target entry)]
+             (if (.-isIntersecting entry)
+               (some-> (.play video) (.catch (fn [_])))
+               (.pause video)))))
+       #js {:rootMargin "150px"}))))
+
+(defn observe-clip
+  [element]
+  (when element
+    (if-let [observer @clip-observer]
+      (.observe observer element)
+      (do (set! (.-autoplay element) true)                 ; no observer: just play
+          (some-> (.play element) (.catch (fn [_])))))))
+
+(defn rule-clip
+  [{:keys [file title blurb]}]
+  [:div {:class "clip"}
+   [:video {:class "clip__video"
+            :src (str "/img/organism/video/" file ".mp4")
+            :muted true :loop true :playsInline true
+            :preload "metadata"
+            :ref observe-clip}]
+   [:div {:class "clip__text"}
+    [:h3 {:class "h3 clip__title"} title]
+    [:p blurb]]])
+
+(defn rule-clips-grid
+  []
+  (into [:div {:class "clip-list"}]
+        (for [clip (remove #(= "zach-dan-ryan-play" (:file %)) rule-clips)]
+          ^{:key (:file clip)} [rule-clip clip])))
+
+;; The play-through is long and has sound, so it stays click-to-play behind a
+;; poster frame rather than looping.
+(defn playthrough
+  []
+  [:div {:class "playthrough"}
+   [:video {:src "/img/organism/video/zach-dan-ryan-play.mp4"
+            :poster "/img/organism/video/zach-dan-ryan-play.jpg"
+            :controls true :playsInline true :preload "none"}]
+   [:p "an example of play"]])
 
 (defn organism-nav
   []
@@ -1056,7 +1080,9 @@
      [:div {:class "constrainer"}
       [:h2 {:class "h2 align-center"} "A demonstration of every rule"]
       [:p {:class "align-center measure"} "in the order you would teach them"]
-      [rule-clips-grid]]]]])
+      [rule-clips-grid]
+      [:h2 {:class "h2 align-center"} "A GAME"]
+      [playthrough]]]]])
 
 (defn organism-mutations
   []
@@ -1071,7 +1097,7 @@
        [:h2 {:class "h2"} "2x13 ways to alter play - from simple to wild new games.... then combine them"]
        [:p "A mutation is an atomic change to the rules. WARP makes distant spaces adjacent. PILLAR puts something on the board that nothing may share a space with. PERSIST stops elements from dying to integrity — and a host of others"]
        [:p "Base ORGANISM is the most clear and direct version of the game. Each mutation gives a new angle, and with enough you have entered a new reality entirely"]
-       [:p "Each card below opens full size — the exact rule is printed on the card."]]]]
+       [:p "explore the mutation cards — click on the mutation to expand for details."]]]]
     [:div {:class "container container--dark"}
      [:div {:class "constrainer"}
       [mutation-grid mutations]]]
@@ -1093,7 +1119,7 @@
      [:div {:class "constrainer"}
       [:div {:class "measure"}
        [:h2 {:class "h2"} "everything is a circle"]
-       [:p "board, platforms, power board, player diagram, 26 mutation cards — every one of them is a disc. Even the pieces are radial in symmetry. Only the box .... (and we tried)"]]]]
+       [:p "board, platforms, power board, player diagram, 26 mutation cards — each one is a disk of change. Even the pieces are radial in symmetry. Only the box .... (and we tried)"]]]]
     [:div {:class "container container--dark"}
      [:div {:class "constrainer"}
       [:div {:class "half-and-half"}

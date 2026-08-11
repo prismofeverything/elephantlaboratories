@@ -2002,29 +2002,57 @@ input.subscribe__submit--ele {
       -webkit-mask-image: url("/img/organism/assets/symbol-move.png");
       mask-image: url("/img/organism/assets/symbol-move.png"); } }
 
-/* The rule clips — one per line, each introduced by its own heading, so a
-   rule is read then watched rather than hunted for in a grid. */
-.clip-grid {
-  display: block;
+/* The rule clips: one rule per row, the looping video beside its wording —
+   the same shape as the learn page in ../organism. */
+.clip-list {
+  display: flex;
+  flex-direction: column;
   margin: 2rem 0; }
 
 .clip {
-  margin: 0 0 3.5rem;
-  max-width: 46rem;
-  margin-left: auto;
-  margin-right: auto; }
-  .clip:last-child {
-    margin-bottom: 0; }
+  display: flex;
+  align-items: center;
+  gap: 2.25rem;
+  padding: 2rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.09); }
+  .clip:first-child {
+    border-top: none;
+    padding-top: 0.5rem; }
 
 .clip__video {
+  flex: 0 0 300px;
+  width: 300px;
+  aspect-ratio: 1 / 1;
   display: block;
-  width: 100%;
-  height: auto;
-  background: var(--organism-ink);
-  border-radius: 3px; }
+  border-radius: 4px;
+  background: var(--organism-ink); }
 
-.clip__blurb {
-  margin: 0.25rem 0 0.9rem; }
+.clip__text {
+  flex: 1;
+  min-width: 0; }
+  .clip__text p {
+    margin: 0; }
+
+@media (max-width: 45em) {
+  .clip {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem; }
+  .clip__video {
+    flex: none;
+    width: 100%; } }
+
+.playthrough {
+  max-width: 40rem;
+  margin: 0 auto; }
+  .playthrough video {
+    width: 100%;
+    display: block;
+    border-radius: 4px;
+    background: var(--organism-ink); }
+  .playthrough p {
+    margin-top: 0.85rem;
+    text-align: center; }
 
 .clip__title {
   margin: 0;
