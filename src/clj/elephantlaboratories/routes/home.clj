@@ -52,5 +52,10 @@
    ["/sol/thanks" {:get (partial sol-page "sol-thanks")}]
    ["/sol/mailing-list" {:post (partial sign-up db)}]
    ["/sol/complete" {:get (partial sol-page "sol-complete")}]
-   ["/organism" {:get (partial organism-page "organism-home")}]])
+   ["/organism" {:get (partial organism-page "organism-home")}]
+   ["/organism/gameplay" {:get (partial organism-page "organism-gameplay")}]
+   ["/organism/mutations" {:get (partial organism-page "organism-mutations")}]
+   ["/organism/components" {:get (partial organism-page "organism-components")}]
+   ["/organism/sign-up" {:get (partial organism-page "organism-sign-up")}]
+   ["/organism/mailing-list" {:post (partial sign-up db)}]])
 

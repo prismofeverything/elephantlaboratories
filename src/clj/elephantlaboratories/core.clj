@@ -28,7 +28,10 @@
     (-> env
         (update :io-threads #(or % (* 2 (.availableProcessors (Runtime/getRuntime))))) 
         (assoc  :handler (handler/app))
-        (update :port #(or (-> env :options :port) 21112 %))
+        ;; --port beats the config file, which beats the fallback. 21112 sat
+        ;; in the middle of this `or` and, being a literal, always won — which
+        ;; is why dev-config.edn's :port never did anything.
+        (update :port #(or (-> env :options :port) % 21112))
         (select-keys [:handler :host :port])))
   :stop
   (http/stop http-server))

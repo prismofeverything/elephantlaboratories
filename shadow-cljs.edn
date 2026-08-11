@@ -1,0 +1,22 @@
+;; ClojureScript build for elephantlaboratories.com / prismofeverything.com.
+;;
+;;   npx shadow-cljs watch app      dev, with hot reload
+;;   npx shadow-cljs release app    optimised build (what `release.py build` runs)
+;;   npx shadow-cljs compile app    one-off dev build, no watcher
+;;
+;; Deps and source paths come from project.clj (:lein true), so Leiningen stays
+;; the single source of truth for dependencies. Output lands at
+;; resources/public/js/app.js, which is the /js/app.js the page templates
+;; already ask for — same URL lein-cljsbuild served, so nothing in the HTML
+;; changed when this replaced it.
+
+{:lein true
+
+ :builds
+ {:app
+  {:target :browser
+   :output-dir "resources/public/js"
+   :asset-path "/js"
+   :modules {:app {:init-fn elephantlaboratories.core/init!}}
+   :devtools {:after-load elephantlaboratories.core/mount-components
+              :preloads [devtools.preload]}}}}

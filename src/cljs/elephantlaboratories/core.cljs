@@ -27,8 +27,9 @@
       [:span {:class "headernav__menu__item--home__tagline headernav__menu__item--home__tagline--ele"}
        "Elephant" [:br] "Laboratories"]]]
     [:li {:class "headernav__menu__item"}
-     [:a {:href "/sol"} "Our game" 
-      [:span {:class "smallest-hide-inline"} " "]" Sol »"]]
+     [:a {:href "/organism"} "ORGANISM »"]]
+    [:li {:class "headernav__menu__item"}
+     [:a {:href "/sol"} "Sol »"]]
     [:li {:class "headernav__menu__item"}
      [:a {:href "https://shop.elephantlaboratories.com" :target "none"} "Buy" 
       [:span {:class "smallest-hide-inline"} " "]" Sol »"]]]])
@@ -54,19 +55,37 @@
       [:div {:class "flex-vert__item flex-vert__item--light flex-vert__item--floatinghead"}
        [:img {:src "/assets/images/portrait_ryan_@2x.png", :alt "Portrait: Ryan Spangler", :class "image--floating-head", :width "113", :height "113"}]
        [:h2 {:class "h2"} "Ryan"]
-       [:p "Musician, board game designer, software engineer, and adventurer on several planes of existence, Ryan is an outward expression of the possibility of all things. Ryan’s ability to accept all ideas as equally viable until proven otherwise affords him a boundless well of creativity upon which to draw for his creations. His insatiable curiosity propels him along an endless series of fascinations (most recently computational biology and board games) from which new idea pods burst forth with alarming alacrity. As the founder of Elephant Laboratories, Ryan is excited to bring as many of his (and his team’s) pods to life as possible."]
+       [:p "Musician, board game designer, software engineer, and adventurer on several planes of existence, Ryan is an outward expression of the possibility of all things. Ryan’s ability to embrace all ideas as equally viable until proven otherwise affords him a boundless well of creativity upon which to draw for his creations. His insatiable curiosity propels him along an endless series of fascinations (most recently computational biology and board games) from which new idea pods burst forth with compounding transcendence. As the founder of Elephant Laboratories, Ryan is excited to bring as many of his (and his team’s) pods to life as possible."]
        [:p 
         [:a {:href "mailto:ryan@elephantlaboratories.com"} "Email Ryan »"]]]
       [:div {:class "flex-vert__item flex-vert__item--light flex-vert__item--floatinghead"}
        [:img {:src "/assets/images/portrait_sean_@2x.png", :alt "Portrait: Sean Spangler", :class "image--floating-head", :width "113", :height "113"}]
        [:h2 {:class "h2"} "Sean"]
        [:p "Sean is a wonder of nature. Part dreamer, part goat, part bee harmony, his incisive insight into the reality of design impels Elephant Laboratories along into unexplored realms. He is also Ryan’s lifelong mentor and collaborator, and (not so commonly known) is the unabashed optimist of the group. Sean keeps our spirits buoyed with his lighthearted philosophy of life and sunny outlook. Sean's third sight provides the balancing force to drive the engine of creativity at Elephant Laboratories. He is Ryan’s first, best, and always partner in invention. Also a moderate hermit, he will not answer your emails."]]
+      ;; Jodi's bio is retained but not rendered — delete the #_ below to bring it back.
+      #_[:div {:class "flex-vert__item flex-vert__item--light flex-vert__item--floatinghead"}
+         [:img {:src "/assets/images/portrait_jodi_@2x.png", :alt "Portrait: Jodi Sweetman", :class "image--floating-head", :width "113", :height "113"}]
+         [:h2 {:class "h2"} "Jodi"]
+         [:p "Jodi Sweetman is a master of interpersonal subtleties and extrapersonal festivities. Jodi is the great anchor upon which the various endeavors of Elephant Laboratories make contact with reality. Trained in the wild frontier of Michigan, she learned to handle masses of unruly humans while bartending and then managing digital projects (which apparently are much the same). Her drive, intensity, vision and anticipation of all things (even things that don’t happen) lend a solid basis for the great flights of imagination the Elephant Laboratories team embark on every day."]
+         [:p 
+          [:a {:href "mailto:jodi@elephantlaboratories.com"} "Email Jodi »"]]]
       [:div {:class "flex-vert__item flex-vert__item--light flex-vert__item--floatinghead"}
-       [:img {:src "/assets/images/portrait_jodi_@2x.png", :alt "Portrait: Jodi Sweetman", :class "image--floating-head", :width "113", :height "113"}]
-       [:h2 {:class "h2"} "Jodi"]
-       [:p "Jodi Sweetman is a master of interpersonal subtleties and extrapersonal festivities. Jodi is the great anchor upon which the various endeavors of Elephant Laboratories make contact with reality. Trained in the wild frontier of Michigan, she learned to handle masses of unruly humans while bartending and then managing digital projects (which apparently are much the same). Her drive, intensity, vision and anticipation of all things (even things that don’t happen) lend a solid basis for the great flights of imagination the Elephant Laboratories team embark on every day."]
-       [:p 
-        [:a {:href "mailto:jodi@elephantlaboratories.com"} "Email Jodi »"]]]]]
+       [:img {:src "/assets/images/portrait_zach_@2x.png", :alt "Portrait: Zach", :class "image--floating-head", :width "113", :height "113"}]
+       [:h2 {:class "h2"} "Zach"]
+       [:p "Zach has always loved games. It isn’t something he chooses so much as something built into him. He’s drawn to the constant learning that comes with new mechanics, the satisfaction of working through a well-designed puzzle, and the artistry that goes into every component. Across the many games being created and played, he finds something worth appreciating in nearly all of them."]]]]
+    [:div {:class "constrainer"}
+     [:hr]]
+    [:div {:class "constrainer"}
+     [:div {:class "golden"}
+      [:div {:class "golden__item golden__item--a"}
+       [:img {:src "/img/organism/box-cover-500.jpg", :alt "Box cover: ORGANISM", :class "image--featured", :width "500", :height "500"}]]
+      [:div {:class "golden__item golden__item--b"}
+       [:h2 {:class "h2--kicker h2--kicker--ele"} "Our newest game"]
+       [:h3 {:class "h2 h2--ele"} "ORGANISM "
+        [:span {:class "h2__tagline h2__tagline--ele"} "Eat · Grow · Move"]]
+       [:p "ORGANISM is a game of growth, multiplication, and struggle for 1–6 players. Wielding the simple actions of EAT / GROW / MOVE / CIRCULATE the minimal ruleset is maximally integrated and generates a tight yet boundless decision space. Amplified by a set of mutation cards which expand the rules in countless subtle and not-so-subtle ways, it is really a family of related games in a single box that can never be " [:nobr "truly exhausted."]]
+       [:p
+        [:a {:href "/organism", :class "button button--ele"} "Learn More"]]]]]
     [:div {:class "constrainer"}
      [:hr]]
     [:div {:class "constrainer"}
@@ -74,7 +93,7 @@
       [:div {:class "golden__item golden__item--a"}
        [:img {:src "/assets/images/box_hero_solo_@2x.png", :alt "Product Shot: Sol", :class "image--featured", :width "500", :height "500"}]]
       [:div {:class "golden__item golden__item--b"}
-       [:h2 {:class "h2--kicker h2--kicker--ele"} "Our newest game"]
+       [:h2 {:class "h2--kicker h2--kicker--ele"} "Also from the lab"]
        [:h3 {:class "h2 h2--ele"} "SOL " 
         [:span {:class "h2__tagline h2__tagline--ele"} "Last Days of a Star"]]
        [:p "Sol: Last Days of a Star is a strategic game of solar destruction and salvation for 1-5 players. Play as one of the five worlds orbiting the Sun, diving into the searing plasma to harvest critical energy — energy needed to fuel your escape before the Sun goes supernova. Sol has simple, easy to learn rules, a deep decision space and emergent strategy that unfolds over " 
@@ -105,7 +124,7 @@
       [:a {:href "https://www.kickstarter.com/projects/elephantlaboratories/sol-last-days-of-a-star/", :rel "external"}
        [:img {:src "/assets/images/elabs/footer_connect_kickstarter_@2x.png", :alt "Kickstarter", :class "icon", :width "19", :height "30"}]]]]]
    [:div {:class "footer__copyright footer__copyright--ele"}
-    [:p "© 2017 Elephant Laboratories, LLC. " 
+    [:p "© 2026 Elephant Laboratories, LLC. " 
      [:nobr "All rights reserved"]]
     [:p "Built by " 
      [:a {:href "https://www.happyfanfare.com", :rel "external"} "Happy Fanfare"]]]])
@@ -149,7 +168,7 @@
   []
   [:<>
    [:main {:class "main-content"}
-    [:div {:class "container container--quote"}
+    [:div {:class "container container--quote container--quote--organism"}
      [:div {:class "constrainer"}
       [:blockquote {:class "container--quote__bq"}
        [:p "“The game brims with wonder.”"]
@@ -288,7 +307,7 @@
       [:a {:href "https://www.kickstarter.com/projects/elephantlaboratories/sol-last-days-of-a-star/", :rel "external"}
        [:img {:src "/assets/images/footer_connect_kickstarter_@2x.png", :alt "Kickstarter", :class "icon", :width "19", :height "30"}]]]]]
    [:div {:class "footer__copyright"}
-    [:p "© 2024 Elephant Laboratories, LLC. " 
+    [:p "© 2026 Elephant Laboratories, LLC. " 
      [:nobr "All rights reserved. | " 
       [:a {:href "/"} "Contact Us"]" | " 
       [:a {:href "/sol/thanks"} "Game Credits"]]]
@@ -772,152 +791,436 @@
      [:p "Thank you for subscribing! You will be notified about these projects as information becomes available. "]]]])
 
 
+;; ── ORGANISM ────────────────────────────────────────────────────────────────
+;;
+;; Every physical component in ORGANISM is a disc — the board, the five player
+;; plateaus, the power board, the turn aid and all 26 mutation cards.
+;; script/organism_assets.py trims each one out of the print art into a
+;; transparent PNG under /img/organism/assets/, which is why they can sit
+;; directly on a light or a dark section with no plate behind them.
+
+(def organism-rulebook "/img/organism/organism-rulebook.pdf")
+
+;; The 26 mutations, in the order they appear in the deck. Each has a matching
+;; cut-out at assets/mutation-<name>.png and assets/thumbs/mutation-<name>.png.
+(def mutations
+  ["Accelerate" "Avenge" "Combust" "Commune" "Drink" "Echo" "Expand" "Jump"
+   "Merge" "Persist" "Pulse" "Push" "Rain" "Regenerate" "Skip" "Project"
+   "Synchronize" "Slide" "Contract" "Warp" "Pillar" "Metamorphose" "Immolate"
+   "Inherit" "Reclaim" "Transmute"])
+
+(def player-colors ["red" "green" "blue" "yellow" "purple"])
+
+;; The rule clips, in teaching order. Each is a short silent loop rendered from
+;; the same scene as the trailer, so they carry the current sculpts and colours.
+(def rule-clips
+  [{:file "clip_board"     :title "The board"       :blurb "Concentric rings of hexes, from the contested centre out to the rim."}
+   {:file "clip_eat"       :title "EAT"             :blurb "Draw food in from the space an element occupies."}
+   {:file "clip_grow"      :title "GROW"            :blurb "Spend food to add a new element to the organism."}
+   {:file "clip_move"      :title "MOVE"            :blurb "Carry an element into a neighbouring space."}
+   {:file "clip_circulate" :title "CIRCULATE"       :blurb "Pass food between the elements of one organism."}
+   {:file "clip_two_org"   :title "Two organisms"   :blurb "Split, and each half takes its own action."}
+   {:file "clip_three_org" :title "Three organisms" :blurb "And again — the shape you make is the game."}
+   {:file "clip_conflict"  :title "Conflict"        :blurb "What happens when rival elements of the same type meet."}
+   {:file "clip_perish"    :title "Integrity"       :blurb "An organism that cannot hold itself together comes apart."}
+   {:file "clip_power"     :title "Power"           :blurb "Holding the centre pays, and the power board keeps the score."}])
+
+(defn rule-clip
+  [{:keys [file title blurb]}]
+  [:figure {:class "clip"}
+   [:video {:class "clip__video"
+            :src (str "/img/organism/video/" file ".mp4")
+            :poster (str "/img/organism/video/" file ".jpg")
+            :muted true :loop true :playsInline true :controls true
+            :preload "none"
+            :width "560" :height "315"}]
+   [:figcaption {:class "clip__caption"}
+    [:h3 {:class "h3 clip__title"} title]
+    [:p blurb]]])
+
+(defn rule-clips-grid
+  []
+  (into [:div {:class "clip-grid"}]
+        (for [clip rule-clips]
+          ^{:key (:file clip)} [rule-clip clip])))
+
+(def organism-actions
+  [{:key "eat"
+    :name "EAT"
+    :blurb "Draw food in from adjacent spaces - food is what everything is made of (!)"}
+   {:key "grow"
+    :name "GROW"
+    :blurb "Spend food to add a new element to the organism. The more of that element you already have, the more food it requires."}
+   {:key "move"
+    :name "MOVE"
+    :blurb "Move an element to an adjacent space — so long as it is fed, mobile, alive, and not blocked by an opponent's element of the same type."}])
+
+(defn cutout
+  "Path to a trimmed, transparent component cut-out."
+  ([name] (cutout name false))
+  ([name thumb?]
+   (str "/img/organism/assets/" (when thumb? "thumbs/") name ".png")))
+
+(defn mutation-card
+  [mutation]
+  (let [slug (string/lower-case mutation)]
+    [:a {:class "mutation chocolat-image"
+         :href (cutout (str "mutation-" slug))
+         :title (str mutation " — an ORGANISM mutation")}
+     [:img {:src (cutout (str "mutation-" slug) true)
+            :alt (str "Mutation card: " mutation)
+            :class "mutation__image"
+            :width "320"
+            :height "320"
+            :loading "lazy"}]
+     [:span {:class "mutation__name"} mutation]]))
+
+(defn mutation-grid
+  [names]
+  (into
+   [:div {:class "mutation-grid"
+          :id "chocolat_mutations"
+          :data-chocolat-title "mutations of ORGANISM"}]
+   (for [mutation names]
+     ^{:key mutation} [mutation-card mutation])))
+
+(defn plateau-row
+  []
+  (into
+   [:div {:class "disc-row"}]
+   (for [color player-colors]
+     ^{:key color}
+     [:img {:src (cutout (str "plat-" color))
+            :alt (str "Player plateau: " color)
+            :class "disc-row__disc"
+            :width "180"
+            :height "180"
+            :loading "lazy"}])))
+
 (defn organism-nav
   []
   [:nav {:class "headernav"}
    [:ul {:class "headernav__menu"}
     [:li {:class "headernav__menu__item headernav__menu__item--home"}
-     [:a {:href "/organism"} "ORGANISM" 
-      [:span {:class "headernav__menu__item--home__tagline"} ""]]]
-    ;; [:li {:class "headernav__menu__item"}
-    ;;  [:a {:href "/sol/gameplay/"} "Gameplay"]]
-    ;; [:li {:class "headernav__menu__item"}
-    ;;  [:a {:href "/sol/worlds/"} "Mythos"]]
-    ;; [:li {:class "headernav__menu__item"}
-    ;;  [:a {:href "/sol/media/"} "Media"]]
+     [:a {:href "/organism"} "ORGANISM"
+      [:span {:class "headernav__menu__item--home__tagline"} "Eat · Grow · Move"]]]
     [:li {:class "headernav__menu__item"}
-     [:a {:href "/sol/buy"} "Buy"]]]])
+     [:a {:href "/organism/gameplay"} "Gameplay"]]
+    [:li {:class "headernav__menu__item"}
+     [:a {:href "/organism/mutations"} "Mutations"]]
+    [:li {:class "headernav__menu__item"}
+     [:a {:href "/organism/components"} "Components"]]
+    [:li {:class "headernav__menu__item"}
+     [:a {:href "/organism/sign-up"} "Sign up"]]]])
 
 (defn organism-header
   []
-  [:header {:class "container container--homeheader"}
+  [:header {:class "container container--homeheader container--organismheader"}
    [:div {:class "constrainer"}
     [:div {:class "masthead measure"}
-     [:h1 {:class "h1 masthead__h1"}
-      [:img {:src "/img/organism/organism-cover.png", :alt "ORGANISM", :class "masthead__image", :width "1000", :height "270"}]]
-     [:h2 {:class "h2 masthead__h2"}
+     [:h1 {:class "h1 masthead__h1 masthead__h1--organism"} "ORGANISM"]
+     [:h2 {:class "h2 masthead__h2"} "Eat · Grow · Move"
       [:span "From Elephant Laboratories"]]
-     [:p "ORGANISM is a game of growth, multiplication, and struggle for 1-6 players. Wielding the simple actions of EAT / GROW / MOVE / CIRCULATE the minimal ruleset is maximally integrated and generates a tight yet boundless decision space. Amplified by a set of mutation cards which expand the rules in countless subtle and not-so-subtle ways, it is really a family of related games in a single box that can never be truly exhausted."]
+     [:p "ORGANISM is a game of growth, multiplication, and struggle for 1–6 players. Wielding the simple actions of EAT / GROW / MOVE / CIRCULATE the minimal ruleset is maximally integrated and generates a tight yet boundless decision space. Amplified by a set of mutation cards which expand the rules in countless subtle and not-so-subtle ways, it is really a family of related games in a single box that can never be " [:nobr "truly exhausted."]]
      [:p {:class "buttonwrap"}
       [:a {:href "#what", :class "button buttonwrap__button"} "Learn More"]
-      [:a {:href "/sol/buy", :class "button buttonwrap__button button--outline"} "Sign up!"]]
+      [:a {:href "/organism/sign-up", :class "button buttonwrap__button button--outline"} "Sign up!"]]
      [:aside {:class "current-status"}
-      [:strong "CURRENT STATUS"]": PLANNING CAMPAIGN!"]]]])
+      [:strong "CURRENT STATUS"]": campaign imminent!"]]]])
 
 (defn organism-main
   []
   [:<>
    [:main {:class "main-content"}
-    [:div {:class "container container--quote"}
+    [:div {:class "container container--quote container--quote--organism"}
      [:div {:class "constrainer"}
       [:blockquote {:class "container--quote__bq"}
-       [:p "“The game brims with wonder.”"]
-       [:cite 
-        [:span {:class "cite__author"} "Cole Wehrle"]
-        [:span {:class "cite__role"} "designer of Pax Pamir"]]]]]
+       [:p "“I like to describe ORGANISM as ‘Go by way of Twilight Imperium’.”"]
+       [:cite
+        [:span {:class "cite__author"} "Marceline Leiman"]
+        [:span {:class "cite__role"} "designer of High Tide"]]]]]
     [:div {:class "container container--light", :id "what"}
      [:div {:class "constrainer"}
       [:div {:class "half-and-half"}
        [:div {:class "half-and-half__item"}
-        [:img {:src "/assets/images/box_hero_solo_@2x.png", :alt "Product Shot: Sol", :class "image--featured", :width "500", :height "500"}]]
+        [:img {:src "/img/organism/box-cover.jpg", :alt "Box cover: ORGANISM", :class "image--featured", :width "500", :height "500"}]]
        [:div {:class "half-and-half__item"}
-        [:div {:class "sol-rule sol-rule--gold"}
-         [:h2 {:class "h2"} "What is Sol?"]
-         [:p "Sol is a race against time, carefully balanced with a fresh engine-building mechanic uniquely rooted in mutual benefit and competition. Each game of Sol begins as an open starscape, ripe for emerging interdependent networks and careful planning at every turn: build your energy node so that other players are enticed by its strategic placement; activate an opponent’s foundry when they are low on energy so you capture the bonus; plot a multiple activation of other players’ transmit towers without ever having to build your own. There are countless approaches to explore in " 
-          [:strong "Sol: Last Days " 
-           [:nobr "of a Star."]]]
-         [:p "Sol has very little luck, but the compounding of simple actions keep the game moving quickly. The high degree of player interaction and the array of Instability Effects allow for a surprisingly customizable vibe to " 
-          [:nobr "each game."]]
-         [:p 
-          [:a {:href "/sol/buy", :class "button button--outline"} "Sign up!"]]]]]
-      [:h3 {:class "h3 align-center"} "Many Ways " 
-       [:nobr "to Play"]]
-      [:div {:class "half-and-half"}
-       [:div {:class "half-and-half__item"}
-        [:p "Sol’s primary play mode allows for 2–5 players, with a compelling solo play variant. Thirty instability effect cards ensure that every session is unique, and allow fine-tuning the game’s duration, degree of difficulty, and the option to add " 
-         [:nobr "player-v-player conflict."]]
-        [:p 
-         [:a {:href "http://elephantlaboratories.com/sol-rulebook.pdf", :rel "external"}
-          [:nobr "Download the rulebook »"]]]]
-       [:div {:class "half-and-half__item"}
-        [:p "Players may also choose to explore Sol as a co-op; choose quick start with “vestigial structures” already in place; or add “trigger event” cards for additional " 
-         [:nobr "solar unpredictability."]]
-        [:p 
-         [:a {:href "/sol/gameplay"} "Learn more " 
-          [:nobr "about gameplay »"]]]]]]]
+        [:div {:class "organism-rule organism-rule--eat"}
+         [:h2 {:class "h2"} "What is ORGANISM?"]
+         [:p "You are a living thing on a board that is also a living thing. Your elements eat, they grow, they move, and they circulate — and encounter other organisms (!)"]
+         [:p "Is it a game of conflict, or growth/peace? You decide."]
+         [:p
+          [:a {:href "/organism/gameplay", :class "button"} "How it plays"]
+          [:a {:href "/organism/sign-up", :class "button button--outline"} "Sign up!"]]]]]
+      [:h3 {:class "h3 align-center"} "Three actions, " [:nobr "endlessly combined"] " (plus a universal fourth action)"]
+      (into
+       [:div {:class "element-row"}]
+       (for [{:keys [key name blurb]} organism-actions]
+         ^{:key key}
+         [:div {:class "element-row__item"}
+          [:img {:src (cutout (str "piece-" key)), :alt (str "Sculpted element: " name), :class "element-row__piece", :width "300", :height "300", :loading "lazy"}]
+          [:h2 {:class "h2"} name]
+          [:p blurb]]))
+      [:p {:class "align-center"} "…CIRCULATE, which moves food within the organism, nourishing/mobilizing every part of the sprawling beast."]]]
     [:div {:class "container container--dark"}
      [:div {:class "constrainer"}
       [:div {:class "half-and-half"}
        [:div {:class "half-and-half__item"}
-        [:h2 {:class "h2"} "What’s in " 
-         [:nobr "the box?"]]
+        [:h2 {:class "h2"} "What’s in " [:nobr "the box"]]
         [:ul {:class "no-bullets two-columns two-columns--narrow"}
-         [:li "150 Custom plastic player pieces"]
-         [:li "89 Energy cubes"]
-         [:li "30 Instability effect cards"]
-         [:li "96 Instability cards"]
-         [:li "8 Trigger event cards"]
-         [:li "7 Wooden instability tokens"]
-         [:li 
-          [:nobr "1 Double-sided game board"]]
-         [:li "5 Player holds"]
-         [:li "5 Player aids"]
-         [:li "1 Momentum track"]
-         [:li "1 Instability marker"]
-         [:li "1 Rulebook"]
-         [:li "1 Rules summary sheet"]
-         [:li "1 Mythos book"]]
-        [:img {:src "/assets/images/inthebox_stats_@2x.png", :alt "inthebox_stats_@2x", :width "423", :height "82"}]]
+         [:li "1 hex board"]
+         [:li "5 player plateaus"]
+         [:li "1 power board"]
+         [:li "26 mutation cards"]
+         [:li "Sculpted EAT, GROW and MOVE elements"]
+         [:li "Food tokens"]
+         [:li "1 turn aid"]
+         [:li "1 rulebook"]]
+        [:p
+         [:a {:href "/organism/components"} "See every component "
+          [:nobr "»"]]]]
        [:div {:class "half-and-half__item half-and-half__item--image"}
-        [:img {:src "/assets/images/box_inthebox_@2x.png", :alt "Product Shot: Sol", :class "image--featured"}]
-        [:p {:id "chocolat_gallery", :class "gallery", :data-chocolat-title "What’s in the box?"} "View Images" 
-         [:span {:class "gallery__menu"}
-          [:a {:class "button button--gallery chocolat-image", :href "/assets/images/sol-gallery_1.jpg", :title "Image 1 Caption"} "1"]
-          [:a {:class "button button--gallery chocolat-image", :href "/assets/images/sol-gallery_2.jpg", :title "Image 2 Caption"} "2"]
-          [:a {:class "button button--gallery chocolat-image", :href "/assets/images/sol-gallery_3.jpg", :title "Image 3 Caption"} "3"]
-          [:a {:class "button button--gallery chocolat-image", :href "/assets/images/sol-gallery_4.jpg", :title "Image 4 Caption"} "4"]
-          [:a {:class "button button--gallery chocolat-image", :href "/assets/images/sol-gallery_5.jpg", :title "Image 5 Caption"} "5"]]]]]]]
-    [:div {:class "container container--worldsofsolhome"}
+        [:img {:src "/img/organism/scene-organisms.jpg", :alt "ORGANISM in play", :class "image--featured", :width "600", :height "400", :loading "lazy"}]]]]]
+    [:div {:class "container container--light container--organismteaser"}
      [:div {:class "constrainer"}
       [:div {:class "half-and-half"}
        [:div {:class "half-and-half__item"}
-        [:div {:class "sol-rule sol-rule--white"}
-         [:h2 {:class "h2"} "The Worlds " 
-          [:nobr "of Sol"]]
-         [:p "The story behind Sol is a richly-textured utopian future, a time of limitless resources in which war, poverty, and suffering are distant memories…until the sun begins to die. The 32-page Mythos Book, beautifully written by CJ Hallowell, provides a window into the vibrant cultures competing to preserve their way of life in the face of impending " 
-          [:nobr "solar annihilation."]]
-         [:p 
-          [:a {:href "/sol/worlds"} "Learn more " 
-           [:nobr "about Sol Mythos »"]]]]
-        [:div {:class "sol-rule sol-rule--white"}
-         [:h2 {:class "h2"} "Videos " 
-          [:nobr "and Links"]]
-         [:p "Watch how-to’s, play-throughs and interviews with Sol’s design team. Download the complete rulebook. Read all the nice things others are saying " 
-          [:nobr "about Sol."]]
-         [:p 
-          [:a {:href "/sol/media"}
-           [:nobr "Check out videos and links »"]]]]]
-       [:div {:class "half-and-half__item half-and-half__item--light container--worldsofsol__floating-heads"}
-        [:img {:src "/assets/images/portrait_ryan-sean_@2x.png", :alt "portrait_ryan-sean_@2x", :class "image--floating-head", :width "113", :height "113"}]
-        [:h2 {:class "h2"} "Brothers " 
-         [:nobr "in Space"]]
-        [:p "Sol is the creation of brothers Ryan Spangler and Sean Spangler, whose earliest memories involve playing—and making—board games together. Their shared passion for strategy, invention, collaboration, and the act of bringing something new into the world drove them to design a game that they continue to enjoy playing…years after " 
-         [:nobr "its inception."]]
-        [:p "Sol is by all definitions an independent game, but it owes its existence to a vast supportive community of family, friends, and " 
-         [:nobr "enthusiastic backers."]]
-        [:p 
-         [:a {:href "/sol/thanks"} "We have so many " 
-          [:nobr "to thank »"]]]]]]]]
-   [:script
-    "  $(function(){
-    $('#chocolat_gallery').Chocolat({
-      loop      : true,
-      imageSize : 'contain',
-      enableZoom  : false,
-      fullScreen  : false,
-    });
-  });
-"]])
+        [:div {:class "organism-rule organism-rule--move"}
+         [:h2 {:class "h2"} "The mutations"]
+         [:p "Twenty-six cards, each one a universe of its own. Play with none of them, one of them, or as many as you want — all players benefit from them. In this way the box is really a family of related games to explore:"]
+         [:p
+          [:a {:href "/organism/mutations"} "All 26 mutations "
+           [:nobr "»"]]]]
+        [:div {:class "organism-rule organism-rule--grow"}
+         [:h2 {:class "h2"} "The rulebook"]
+         [:p
+          [:a {:href organism-rulebook, :rel "external"} "Read the rulebook "
+           [:nobr "»"]]]]]
+       [:div {:class "half-and-half__item"}
+        [:img {:src (cutout "board-hex"), :alt "The ORGANISM board", :class "image--featured", :width "500", :height "500", :loading "lazy"}]]]]]]])
+
+(defn organism-gameplay
+  []
+  [:<>
+   [:header {:class "container container--pageheader container--pageheader--organism"}
+    [:div {:class "constrainer"}
+     [:h1 {:class "h1"} "GAMEPLAY"]]]
+   [:main {:class "main-content"}
+    [:div {:class "container container--light"}
+     [:div {:class "constrainer"}
+      [:div {:class "half-and-half"}
+       [:div {:class "half-and-half__item"}
+        [:div {:class "organism-rule organism-rule--eat"}
+         [:h2 {:class "h2"} "A turn"]
+         [:p "Introduce your starting elements, then on each turn choose one organism and one element type, and take that action with every element of that type — or circulate instead. Hold the centre at the start of your turn and it is yours. Then conflicts resolve, and every organism is checked for integrity."]
+         [:p "The turn aid holds all of it on one disc; it is the only reference the table needs."]
+         [:p
+          [:a {:href organism-rulebook, :rel "external", :class "button"} "Read the rulebook"]]]]
+       [:div {:class "half-and-half__item"}
+        [:img {:src (cutout "player-aid"), :alt "ORGANISM turn aid: introduce, perform actions, occupy core, resolve conflicts, check integrity", :class "image--featured", :width "560", :height "560"}]]]]]
+    [:div {:class "container container--dark"}
+     [:div {:class "constrainer"}
+      [:h2 {:class "h2 align-center"} "The elements"]
+      [:p {:class "align-center measure"} "Each element is a sculpted piece that does one thing. An organism is whatever collection of them you are holding together at the moment — and it stops being an organism the moment the pieces stop touching."]
+      (into
+       [:div {:class "element-row"}]
+       (for [{:keys [key name blurb]} organism-actions]
+         ^{:key key}
+         [:div {:class "element-row__item"}
+          [:img {:src (cutout (str "piece-" key)), :alt (str "Sculpted element: " name), :class "element-row__piece", :width "300", :height "300", :loading "lazy"}]
+          [:h3 {:class "h3"} name]
+          [:p blurb]]))]]
+    [:div {:class "container container--light"}
+     [:div {:class "constrainer"}
+      [:div {:class "half-and-half"}
+       [:div {:class "half-and-half__item half-and-half__item--image"}
+        [:img {:src "/img/organism/photo-closeup.jpg", :alt "ORGANISM mid-game: elements and food on the board", :class "image--featured", :width "600", :height "400", :loading "lazy"}]]
+       [:div {:class "half-and-half__item half-and-half__item--image"}
+        [:img {:src "/img/organism/photo-table.jpg", :alt "Playing ORGANISM at the table", :class "image--featured", :width "440", :height "660", :loading "lazy"}]]]
+      [:p {:class "align-center"}
+       [:a {:href "/organism/mutations", :class "button"} "Then add mutations"]]]]
+    [:div {:class "container container--dark"}
+     [:div {:class "constrainer"}
+      [:h2 {:class "h2 align-center"} "Every rule, in about ten seconds each"]
+      [:p {:class "align-center measure"} "One short clip per rule, in the order you would teach them."]
+      [rule-clips-grid]]]]])
+
+(defn organism-mutations
+  []
+  [:<>
+   [:header {:class "container container--pageheader container--pageheader--organism"}
+    [:div {:class "constrainer"}
+     [:h1 {:class "h1"} "MUTATIONS"]]]
+   [:main {:class "main-content"}
+    [:div {:class "container container--light"}
+     [:div {:class "constrainer"}
+      [:div {:class "measure"}
+       [:h2 {:class "h2"} "Twenty-six ways to break your own game"]
+       [:p "A mutation is one card that changes one rule. WARP makes distant spaces adjacent. PILLAR puts something on the board that nothing may share a space with. PERSIST stops elements dying to integrity at all — and quietly changes what every other card means."]
+       [:p "Deal none of them and ORGANISM is a tight, clean game about shape. Deal a few and it becomes a different tight, clean game. They compose, and they do not always compose gently."]
+       [:p "Each card below opens full size — the exact rule is printed on the card."]]]]
+    [:div {:class "container container--dark"}
+     [:div {:class "constrainer"}
+      [mutation-grid mutations]]]
+    [:div {:class "container container--light"}
+     [:div {:class "constrainer"}
+      [:p {:class "align-center"}
+       [:a {:href organism-rulebook, :rel "external", :class "button"} "Read the rulebook"]
+       [:a {:href "/organism/sign-up", :class "button button--outline"} "Sign up!"]]]]]])
+
+(defn organism-components
+  []
+  [:<>
+   [:header {:class "container container--pageheader container--pageheader--organism"}
+    [:div {:class "constrainer"}
+     [:h1 {:class "h1"} "COMPONENTS"]]]
+   [:main {:class "main-content"}
+    [:div {:class "container container--light"}
+     [:div {:class "constrainer"}
+      [:div {:class "measure"}
+       [:h2 {:class "h2"} "Almost everything is a circle"]
+       [:p "The board, the plateaus, the power board, the turn aid, all 26 mutation cards — every one of them is a disc. Only the box and the sculpted elements are not."]]]]
+    [:div {:class "container container--dark"}
+     [:div {:class "constrainer"}
+      [:div {:class "half-and-half"}
+       [:div {:class "half-and-half__item"}
+        [:h2 {:class "h2"} "The board"]
+        [:p "One disc, printed on both faces — hexes on one side, pentagons on the other. Concentric rings run from the contested centre out to the rim where organisms are introduced."]]
+       [:div {:class "half-and-half__item half-and-half__item--image"}
+        [:img {:src (cutout "board-hex"), :alt "The ORGANISM board, hex face", :class "image--featured", :width "380", :height "380"}]
+        [:img {:src (cutout "board-pent"), :alt "The ORGANISM board, pentagon face", :class "image--featured", :width "380", :height "380", :loading "lazy"}]]]]]
+    [:div {:class "container container--light"}
+     [:div {:class "constrainer"}
+      [:h2 {:class "h2 align-center"} "Five player plateaus"]
+      [:p {:class "align-center measure"} "One per player, each in its own colour, holding the elements you have yet to introduce."]
+      [plateau-row]]]
+    [:div {:class "container container--dark"}
+     [:div {:class "constrainer"}
+      [:div {:class "half-and-half"}
+       [:div {:class "half-and-half__item half-and-half__item--image"}
+        [:img {:src (cutout "power-board"), :alt "The ORGANISM power board", :class "image--featured", :width "420", :height "420", :loading "lazy"}]]
+       [:div {:class "half-and-half__item half-and-half__item--image"}
+        [:img {:src (cutout "player-aid"), :alt "The ORGANISM turn aid", :class "image--featured", :width "420", :height "420", :loading "lazy"}]]]
+      [:div {:class "half-and-half"}
+       [:div {:class "half-and-half__item"}
+        [:h2 {:class "h2"} "The power board"]
+        [:p "Tracks each player’s standing around its rings."]]
+       [:div {:class "half-and-half__item"}
+        [:h2 {:class "h2"} "The turn aid"]
+        [:p "The whole turn structure on one disc."]]]]]
+    [:div {:class "container container--light"}
+     [:div {:class "constrainer"}
+      [:h2 {:class "h2 align-center"} "The sculpted elements"]
+      [:p {:class "align-center measure"} "EAT, GROW and MOVE are distinct shapes in the hand — you can tell an organism’s makeup by touch."]
+      [:div {:class "half-and-half"}
+       [:div {:class "half-and-half__item half-and-half__item--image"}
+        [:img {:src "/img/organism/photo-closeup.jpg", :alt "The sculpted elements on the board", :class "image--featured", :width "600", :height "400", :loading "lazy"}]]
+       [:div {:class "half-and-half__item half-and-half__item--image"}
+        [:img {:src (cutout "piece-food"), :alt "An ORGANISM food token", :class "image--featured", :width "420", :height "270", :loading "lazy"}]]]]]
+    [:div {:class "container container--dark"}
+     [:div {:class "constrainer"}
+      [:h2 {:class "h2 align-center"} "Twenty-six mutation cards"]
+      [mutation-grid (take 8 mutations)]
+      [:p {:class "align-center"}
+       [:a {:href "/organism/mutations", :class "button"} "See all 26"]]]]
+    [:div {:class "container container--light"}
+     [:div {:class "constrainer"}
+      [:div {:class "half-and-half"}
+       [:div {:class "half-and-half__item half-and-half__item--image"}
+        [:img {:src "/img/organism/box-wrap.jpg", :alt "The ORGANISM box", :class "image--featured", :width "600", :height "600", :loading "lazy"}]]
+       [:div {:class "half-and-half__item"}
+        [:h2 {:class "h2"} "The box"]
+        [:p "Artwork by Wyn Tiedmers, wrapping all six faces."]
+        [:p
+         [:a {:href "/organism/sign-up", :class "button"} "Sign up for updates"]]]]]]]])
+
+(defn organism-sign-up
+  []
+  [:<>
+   [:header {:class "container container--pageheader container--pageheader--organism"}
+    [:div {:class "constrainer"}
+     [:h1 {:class "h1"} "SIGN UP"]]]
+   [:main {:class "main-content"}
+    [:div {:class "container container--light"}
+     [:div {:class "constrainer"}
+      [:div {:class "measure"}
+       [:h2 {:class "h2"} "Be here when ORGANISM lands"]
+       [:p "We are heading into a campaign for ORGANISM. Sign up and we will let you know when it opens — and nothing else."]
+       [:p {:style {:color "#a19364"}} "(We will only use your information to send you occasional updates on our games. "
+        [:br]
+        " You can opt out at any time. We will never sell or share your information.)"]
+       [:div {:class "half-and-half half-and-half--buy"}
+        [:fieldset {:id "organism-sign-up", :class "half-and-half__item buy__fieldset"}
+         [:legend {:class "h3"} "Sign up for updates!"]
+         [:div {:class "buy__inputgroup"}
+          [:label {:class "buy__inputgroup__label"}
+           [:span {:class "buy__inputgroup__label__desc"} "Name"]
+           [:input
+            {:id "organism-name"
+             :name "name"
+             :class "field buy__inputgroup__input--text"
+             :value (:name @form)
+             :on-change
+             (fn [event]
+               (let [value (-> event .-target .-value)]
+                 (swap! form assoc :name value)))}]]]
+         [:div {:class "buy__inputgroup"}
+          [:label {:class "buy__inputgroup__label"}
+           [:span {:class "buy__inputgroup__label__desc"} "Email"]
+           [:input
+            {:id "organism-email"
+             :name "email"
+             :class "field buy__inputgroup__input--text"
+             :value (:email @form)
+             :on-change
+             (fn [event]
+               (let [value (-> event .-target .-value)]
+                 (swap! form assoc :email value)))}]]]
+         [:div {:class "buy__inputgroup"}
+          [:label {:class "buy__inputgroup__label"}
+           [:input
+            {:type "checkbox"
+             :id "organism-organism"
+             :name "organism"
+             :class "field buy__inputgroup__input--checkbox"
+             :checked (:organism @form)
+             :on-change
+             (fn [event]
+               (let [checked (-> event .-target .-checked)]
+                 (swap! form assoc :organism checked)))}]
+           [:span {:class "buy__inputgroup__label__check"} "ORGANISM"]]]
+         [:div {:class "buy__inputgroup"}
+          [:label {:class "buy__inputgroup__label"}
+           [:input
+            {:type "checkbox"
+             :id "organism-reprint"
+             :name "reprint"
+             :class "field buy__inputgroup__input--checkbox"
+             :checked (:reprint @form)
+             :on-change
+             (fn [event]
+               (let [checked (-> event .-target .-checked)]
+                 (swap! form assoc :reprint checked)))}]
+           [:span {:class "buy__inputgroup__label__check"} "Sol: Journey Between Worlds"]]]
+         [:div {:class "buy__inputgroup"}
+          [:label {:class "buy__inputgroup__label"}
+           [:span {:class "buy__inputgroup__label__desc"} "Any other comments?"]
+           [:textarea
+            {:id "organism-comments"
+             :name "comments"
+             :class "field buy__inputgroup__input--textarea"
+             :value (:comments @form)
+             :on-change
+             (fn [event]
+               (let [value (-> event .-target .-value)]
+                 (swap! form assoc :comments value)))}]]]
+         [:button
+          {:type "submit"
+           :class "button button--left"
+           :on-click
+           (fn [event]
+             (ajax/post-mailing-list! @form))}
+          "Sign up!"]]]]]]]])
 
 (defn organism-footer
   []
@@ -931,26 +1234,18 @@
        [:span {:class "broughttoyou__pre"} "Brought to you by"]
        [:span {:class "broughttoyou__elabs"} "Elephant Laboratories"]
        [:span {:class "broughttoyou__pdx"} "in Portland, Oregon"]]]]
+    ;; ORGANISM has no BoardGameGeek entry or campaign page yet — add the
+    ;; icons back here the moment those URLs exist.
     [:li {:class "footer__menu__social"}
      [:p "Connect with us"]
-     [:p {:class "footer__menu__social__icons"}
-      [:a {:href "https://boardgamegeek.com/boardgame/174837/sol-last-days-star", :rel "external"}
-       [:img {:src "/assets/images/footer_connect_bgg_@2x.png", :alt "BoardGameGeek", :class "icon", :width "32", :height "30"}]]
-      [:a {:href "http://twitter.com/elephantnahpele", :rel "external"}
-       [:img {:src "/assets/images/footer_connect_twitter_@2x.png", :alt "Twitter", :class "icon", :width "24", :height "30"}]]
-      [:a {:href "http://facebook.com/ElephantLabsGames", :rel "external"}
-       [:img {:src "/assets/images/footer_connect_facebook_@2x.png", :alt "Facebook", :class "icon", :width "24", :height "30"}]]
-      [:a {:href "https://www.kickstarter.com/projects/elephantlaboratories/sol-last-days-of-a-star/", :rel "external"}
-       [:img {:src "/assets/images/footer_connect_kickstarter_@2x.png", :alt "Kickstarter", :class "icon", :width "19", :height "30"}]]]]]
+     [:p
+      [:a {:href "mailto:mothership@elephantlaboratories.com"} "mothership@elephantlaboratories.com"]]]]
    [:div {:class "footer__copyright"}
-    [:p "© 2017 Elephant Laboratories, LLC. " 
-     [:nobr "All rights reserved. | " 
-      [:a {:href "/"} "Contact Us"]" | " 
-      [:a {:href "/sol/thanks"} "Game Credits"]]]
-    [:p "Built by " 
+    [:p "© 2026 Elephant Laboratories, LLC. "
+     [:nobr "All rights reserved. | "
+      [:a {:href "/"} "Contact Us"]]]
+    [:p "Built by "
      [:a {:href "https://www.happyfanfare.com", :rel "external"} "Happy Fanfare"]]]])
-
-
 
 (defn home-page
   []
@@ -1012,11 +1307,44 @@
 
 (defn organism-home-page
   []
-  [:<>
-   [organism-nav]
-   [organism-header]
-   [organism-main]
-   [organism-footer]])
+  [:div {:class "organism-theme"}
+   [:<>
+     [organism-nav]
+     [organism-header]
+     [organism-main]
+     [organism-footer]]])
+
+(defn organism-gameplay-page
+  []
+  [:div {:class "organism-theme"}
+   [:<>
+     [organism-nav]
+     [organism-gameplay]
+     [organism-footer]]])
+
+(defn organism-mutations-page
+  []
+  [:div {:class "organism-theme"}
+   [:<>
+     [organism-nav]
+     [organism-mutations]
+     [organism-footer]]])
+
+(defn organism-components-page
+  []
+  [:div {:class "organism-theme"}
+   [:<>
+     [organism-nav]
+     [organism-components]
+     [organism-footer]]])
+
+(defn organism-sign-up-page
+  []
+  [:div {:class "organism-theme"}
+   [:<>
+     [organism-nav]
+     [organism-sign-up]
+     [organism-footer]]])
 
 
 (def pages
@@ -1029,6 +1357,10 @@
    :sol-thanks #'sol-thanks-page
    :sol-complete #'sol-complete-page
    :organism-home #'organism-home-page
+   :organism-gameplay #'organism-gameplay-page
+   :organism-mutations #'organism-mutations-page
+   :organism-components #'organism-components-page
+   :organism-sign-up #'organism-sign-up-page
    :prism-home #'prism/prism-home-page})
 
 (defn page

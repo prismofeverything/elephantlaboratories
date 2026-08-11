@@ -20,3 +20,9 @@ profiles.clj
 .python-version
 __pycache__/
 uv.lock
+
+# shadow-cljs build output (resources/public/js also holds tracked externs/ and lib/)
+/resources/public/js/app.js
+/resources/public/js/manifest.edn
+/resources/public/js/cljs-runtime
+/.shadow-cljs

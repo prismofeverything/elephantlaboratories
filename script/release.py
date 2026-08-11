@@ -16,9 +16,10 @@ Subcommands:
         appear without a restart.
 
     build
-        Build an uberjar from the current working tree, scp it to the
-        remote, and restart the systemd service. Deploy target comes from
-        $DEPLOY_HOST (default: the .com, correct after DNS cutover).
+        Build the ClojureScript with shadow-cljs, then an uberjar from the
+        current working tree, scp it to the remote, and restart the systemd
+        service. Deploy target comes from $DEPLOY_HOST (default: the .com,
+        correct after DNS cutover).
 
     ship
         Upload the already-built local jar and restart the server. Use
@@ -35,6 +36,7 @@ import re
 import shlex
 import shutil
 import sys
+import zipfile
 
 from pathlib import Path
 
@@ -136,6 +138,7 @@ REMOTE_JAR = f'{REMOTE_APP_DIR}/elephantlaboratories.jar'
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 LOCAL_JAR = REPO_ROOT / 'target' / 'uberjar' / 'elephantlaboratories.jar'
+CLJS_OUTPUT = REPO_ROOT / 'resources' / 'public' / 'js' / 'app.js'
 
 
 def sync_tracks():
@@ -145,13 +148,53 @@ def sync_tracks():
     run(['rsync', '-avz', src, dst])
 
 
+# Leiningen no longer compiles the ClojureScript — shadow-cljs does, out of
+# band, writing resources/public/js/app.js. The uberjar picks that file up as
+# an ordinary resource, so this has to run first or the jar ships whatever
+# build happens to be lying there (a `watch` dev build, most likely).
+def build_cljs():
+    print('=== Building ClojureScript (shadow-cljs release) ===', file=sys.stderr)
+    run(['npx', 'shadow-cljs', 'release', 'app'], cwd=str(REPO_ROOT))
+    if not CLJS_OUTPUT.is_file():
+        raise SystemExit(f'shadow-cljs produced no output at {CLJS_OUTPUT}')
+    size_kb = CLJS_OUTPUT.stat().st_size / 1024
+    print(f'built: {CLJS_OUTPUT} ({size_kb:.0f} KB)', file=sys.stderr)
+
+
 def build_jar():
     print('=== Building uberjar ===', file=sys.stderr)
     run(['lein', 'uberjar'], cwd=str(REPO_ROOT))
     if not LOCAL_JAR.is_file():
         raise SystemExit(f'expected jar not produced: {LOCAL_JAR}')
+    verify_jar()
     size_mb = LOCAL_JAR.stat().st_size / (1024 * 1024)
     print(f'built: {LOCAL_JAR} ({size_mb:.1f} MB)', file=sys.stderr)
+
+
+# The JavaScript is built by a different tool into resources/, so it is only a
+# plain resource by the time Leiningen packages it — nothing in the lein build
+# fails if it is absent, and the jar comes out looking perfectly healthy while
+# serving a site with no JS at all. Check before shipping.
+#
+# (`lein uberjar` cleans first by default, so :clean-targets in project.clj
+# must not list shadow's output; that is exactly how this once went wrong.)
+def verify_jar():
+    with zipfile.ZipFile(LOCAL_JAR) as jar:
+        names = set(jar.namelist())
+        entry = 'public/js/app.js'
+        if entry not in names:
+            raise SystemExit(
+                f'{LOCAL_JAR} contains no {entry} — the site would load with no\n'
+                'JavaScript. Run `npx shadow-cljs release app` and rebuild, and\n'
+                'check that :clean-targets does not delete resources/public/js.')
+        if any(name.startswith('public/js/cljs-runtime/') for name in names):
+            raise SystemExit(
+                f'{LOCAL_JAR} contains public/js/cljs-runtime/ — that is a shadow\n'
+                '`watch` build, not a release build. Stop the watcher, run\n'
+                '`npx shadow-cljs release app`, and rebuild.')
+        size_kb = jar.getinfo(entry).file_size / 1024
+    print(f'verified: jar carries {entry} ({size_kb:.0f} KB, release build)',
+          file=sys.stderr)
 
 
 def ship_jar():
@@ -191,6 +234,7 @@ def cmd_sync(args):
 
 
 def cmd_build(args):
+    build_cljs()
     build_jar()
     ship_jar()
     restart_server()
@@ -221,7 +265,7 @@ def main():
     p_sync = sub.add_parser('sync', help='rsync tracks to remote (no restart needed)')
     p_sync.set_defaults(func=cmd_sync)
 
-    p_build = sub.add_parser('build', help='build uberjar, ship it, restart server')
+    p_build = sub.add_parser('build', help='build cljs + uberjar, ship it, restart server')
     p_build.set_defaults(func=cmd_build)
 
     p_ship = sub.add_parser('ship', help='upload existing local jar and restart server')

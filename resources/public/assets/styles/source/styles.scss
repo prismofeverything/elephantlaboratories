@@ -1730,3 +1730,293 @@ input.subscribe__submit--ele {
 		display: inline;
 	}
 }
+/*# sourceMappingURL=styles.css.map */
+
+/* ORGANISM
+   ------------------------------------------------------------------------
+   Almost every ORGANISM component is a disc, and script/organism_assets.py
+   trims each one out of the print art into a transparent PNG. These rules
+   just give the discs room to breathe — no plates, no frames, nothing that
+   would put a rectangle back around a circle. */
+
+/* The ORGANISM hero. The backdrop is the box painting at full strength — no
+   darkening baked into the image — so the greens, corals and yellows read as
+   themselves rather than as Sol's near-black. Contrast for the headline comes
+   from a soft radial scrim that is heaviest under the text and fades to
+   nothing at the corners, so the art stays vivid where nothing sits on it.
+   Measured 8.85:1 for white body copy over the scrim; the text-shadow covers
+   the brightest few pixels. */
+.container--organismheader {
+  color: #ffffff;
+  background-color: #1d2a24;
+  background-image:
+    radial-gradient(ellipse 70% 84% at 50% 46%,
+      rgba(19, 26, 22, 0.72) 0%,
+      rgba(19, 26, 22, 0.56) 42%,
+      rgba(19, 26, 22, 0.22) 74%,
+      rgba(19, 26, 22, 0.00) 100%),
+    url("/img/organism/bkg-organism.jpg");
+  background-size: cover;
+  background-position: center center;
+  text-shadow: 0 1px 2px rgba(16, 22, 18, 0.55); }
+  .container--organismheader h1, .container--organismheader .h1,
+  .container--organismheader h2, .container--organismheader .h2 {
+    color: #ffffff; }
+
+.container--pageheader--organism {
+  background-image:
+    linear-gradient(100deg,
+      rgba(19, 26, 22, 0.82) 0%,
+      rgba(19, 26, 22, 0.58) 36%,
+      rgba(19, 26, 22, 0.16) 72%,
+      rgba(19, 26, 22, 0.00) 100%),
+    url("/img/organism/bkg-organism.jpg");
+  text-shadow: 0 1px 2px rgba(16, 22, 18, 0.5); }
+
+/* The mutation deck. auto-fill keeps the discs the same size at every
+   breakpoint and simply fits fewer per row, so a card never stretches. */
+.mutation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: 1.5rem 1rem;
+  margin: 2rem 0;
+  padding: 0;
+  list-style: none; }
+  @media (min-width: 30em) {
+    .mutation-grid {
+      grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); } }
+
+.mutation {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  border: 0; }
+  .mutation:hover .mutation__image,
+  .mutation:focus .mutation__image {
+    transform: scale(1.06); }
+
+.mutation__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 50%;
+  transition: transform 150ms ease-out; }
+
+.mutation__name {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase; }
+
+/* A row of discs (the five player plateaus) that wraps instead of shrinking. */
+.disc-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem 0; }
+
+.disc-row__disc {
+  flex: 0 1 8rem;
+  width: 8rem;
+  max-width: 30%;
+  height: auto;
+  border-radius: 50%; }
+  @media (min-width: 30em) {
+    .disc-row__disc {
+      flex-basis: 10rem;
+      width: 10rem; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .mutation__image {
+    transition: none; }
+  .mutation:hover .mutation__image,
+  .mutation:focus .mutation__image {
+    transform: none; } }
+
+/* The mutations / rulebook teaser on the ORGANISM home page. Sol's equivalent
+   block sits on a painted Sol landscape; ORGANISM gets a quiet tint instead so
+   the board disc beside it is the only thing with colour in the section. */
+.container--organismteaser {
+  background: #f0efe9; }
+
+/* ORGANISM sets its own wordmark in type — there is no transparent logo
+   asset, and a cropped band of the box art reads as a pasted rectangle. */
+.masthead__h1--organism {
+  letter-spacing: 0.06em;
+  text-align: center; }
+
+/* Three elements do not fit a two-up layout. */
+.element-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin: 2rem 0; }
+  @media (min-width: 40em) {
+    .element-row {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem 1.5rem; } }
+
+.element-row__item {
+  text-align: center; }
+  .element-row__item > *:first-child {
+    margin-top: 0; }
+
+.element-row__piece {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: 11rem;
+  margin: 0 auto 1rem; }
+
+/* The shared pull-quote band is a photograph of Sol. */
+.container--quote--organism {
+  /* The hero already carries the painting; repeating it directly underneath
+     just seams against itself. This is #3d505e — the structural slate that
+     makes up ~7% of that same artwork — so the band still belongs to the
+     palette while giving the eye somewhere to rest. 8.4:1 with white. */
+  color: #ffffff;
+  background-color: #3d505e;
+  background-image: none; }
+  .container--quote--organism .cite__author,
+  .container--quote--organism .cite__role {
+    color: #f0e6c2; }
+
+/* The shared outline button is a dim gold that reads fine on Sol's near-black
+   header but disappears into ORGANISM's lighter, warmer backdrop. */
+.container--organismheader .button--outline:link,
+.container--organismheader .button--outline:visited {
+  color: #f7f2e0;
+  border-color: #f7f2e0; }
+.container--organismheader .button--outline:hover,
+.container--organismheader .button--outline:active,
+.container--organismheader .button--outline:focus {
+  color: #ffffff;
+  border-color: #ffffff; }
+
+/* ORGANISM palette and theme
+   ------------------------------------------------------------------------
+   Sol's gold (#a19364) is used in ~33 places site-wide, so ORGANISM cannot
+   simply redefine it — everything here is scoped to .organism-theme, which
+   wraps the ORGANISM pages only. The action colours are sampled from the
+   printed player aid, where EAT is yellow, GROW green and MOVE coral. */
+
+.organism-theme {
+  --organism-eat: #efd065;
+  --organism-grow: #539e7b;
+  --organism-move: #d37e8d;
+  --organism-slate: #3d505e;
+  --organism-teal: #6a9a9a;
+  --organism-purple: #684d71;
+  --organism-ink: #16201c; }
+
+  /* headings pick up the action colours instead of Sol's beige */
+  .organism-theme .container--light .h2,
+  .organism-theme .container--light h2,
+  .organism-theme .container--organismteaser .h2 {
+    color: var(--organism-grow); }
+  .organism-theme .container--dark .h2,
+  .organism-theme .container--dark h2,
+  .organism-theme .container--dark .h3 {
+    color: var(--organism-eat); }
+  .organism-theme .h2--kicker,
+  .organism-theme .h3.align-center {
+    color: var(--organism-move); }
+  .organism-theme .container--light a:link,
+  .organism-theme .container--light a:visited,
+  .organism-theme .container--organismteaser a:link,
+  .organism-theme .container--organismteaser a:visited {
+    color: #2f7d5c; }
+  .organism-theme .container--dark a:link,
+  .organism-theme .container--dark a:visited {
+    color: var(--organism-eat); }
+  .organism-theme .button:link,
+  .organism-theme .button:visited,
+  .organism-theme button.button {
+    background: var(--organism-slate);
+    border-color: var(--organism-slate);
+    color: #ffffff; }
+  .organism-theme .button:hover,
+  .organism-theme .button:active,
+  .organism-theme .button:focus {
+    background: var(--organism-teal);
+    border-color: var(--organism-teal); }
+  .organism-theme .button--outline:link,
+  .organism-theme .button--outline:visited {
+    background: none;
+    color: var(--organism-slate);
+    border-color: var(--organism-slate); }
+
+/* Rule blocks. Same geometry as Sol's, but the bullet is the game's own
+   EAT / GROW / MOVE glyph, tinted by CSS mask so one white PNG serves all
+   three colours. */
+.organism-rule {
+  position: relative; }
+  .organism-rule:first-child > *:first-child {
+    margin-top: 0; }
+
+@media (min-width: 60em) {
+  .organism-rule {
+    min-height: 11rem;
+    padding-left: 4.0625rem; }
+    .organism-rule + .organism-rule {
+      margin-top: 4rem; }
+    .organism-rule::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.25rem;
+      width: 34px;
+      height: 34px;
+      background-color: var(--organism-move);
+      -webkit-mask: url("/img/organism/assets/symbol-move.png") no-repeat center;
+      mask: url("/img/organism/assets/symbol-move.png") no-repeat center;
+      -webkit-mask-size: contain;
+      mask-size: contain; }
+    .organism-rule--eat::before {
+      background-color: var(--organism-eat);
+      -webkit-mask-image: url("/img/organism/assets/symbol-eat.png");
+      mask-image: url("/img/organism/assets/symbol-eat.png"); }
+    .organism-rule--grow::before {
+      background-color: var(--organism-grow);
+      -webkit-mask-image: url("/img/organism/assets/symbol-grow.png");
+      mask-image: url("/img/organism/assets/symbol-grow.png"); }
+    .organism-rule--move::before {
+      background-color: var(--organism-move);
+      -webkit-mask-image: url("/img/organism/assets/symbol-move.png");
+      mask-image: url("/img/organism/assets/symbol-move.png"); } }
+
+/* The rule clips. */
+.clip-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem 2rem;
+  margin: 2rem 0; }
+  @media (min-width: 40em) {
+    .clip-grid {
+      grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 70em) {
+    .clip-grid {
+      grid-template-columns: repeat(3, 1fr); } }
+
+.clip {
+  margin: 0; }
+
+.clip__video {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--organism-ink);
+  border-radius: 3px; }
+
+.clip__caption {
+  padding-top: 0.75rem; }
+  .clip__caption p {
+    margin-top: 0.25rem; }
+
+.clip__title {
+  margin: 0;
+  color: var(--organism-eat); }
